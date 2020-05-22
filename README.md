@@ -23,12 +23,12 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;3. [BWA/0.7.17-intel-2018b](http://bio-bwa.sourceforge.net/)
 
 ## Usage
-* The main function of MicroGMT contains two steps: sequence_to_vcf.py, which aligns the input file to the reference genome and identify variants; and annotate_vcf.py, which annotates the variants and output summary tables.<br>
-* MicroGMT also provide additional utility scripts:
-&#160;1. combine_summary_tables.py: combine summary tables from different MicroGMT runs.
-&#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.
-&#160;3. analysis_utilities.py: format the summary table for easy access with [R](https://www.r-project.org/), and find unique mutations.
-&#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in the summary tables.
+* The main function of MicroGMT contains two steps: sequence_to_vcf.py, which aligns the input file to the reference genome and identify variants; and annotate_vcf.py, which annotates the variants and output summary tables.
+* MicroGMT also provide additional utility scripts:<br>
+&#160;1. combine_summary_tables.py: combine summary tables from different MicroGMT runs.<br>
+&#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
+&#160;3. analysis_utilities.py: format the summary table for easy access with [R](https://www.r-project.org/), and find unique mutations.<br>
+&#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in the summary tables.<br>
 &#160;5. Find_regiosn_for_new_seqs.sh: find new strains/IDs from the region file accompanying the fasta formatted file of assembled sequences that are not already in the summary tables.
 
 ## Arguments
