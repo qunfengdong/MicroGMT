@@ -36,7 +36,7 @@ No installation required. Simply download the repository and unpack by "tar".
 
 ## Tutorial
 ### 1. Workflow for SARS-CoV-2 sequences
-#### Input
+#### Inputs
 The input file is a fasta formatted database file containing 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020. It is named "sequences0520.fasta".<br>
 This file used strain ID as the fasta header. However, since the strain IDs contain "/", we need to substitute them with something else ("_" in our example):
 ```bash
@@ -87,10 +87,12 @@ Optional arguments:
                         Absolute path to picard.jar. Only required for 'fastq' option.
   -kb                   Keep BAM files.
   -ki                   Keep index files. Only works with 'fastq' option.
-  -p PRIOR              Prior for bcftools variant caller (expected substitution rate). 0 means the prior is disabled. Only works for 'assembly' or 'contig' option. [0]'.
+  -p PRIOR              Prior for bcftools variant caller (expected substitution rate). 0 means the prior is disabled. 
+                        Only works for 'assembly' or 'contig' option. [0]'.
   -m MBQ                Minimum base quality for variant caller. Only works with 'fastq' option. [10]
   -a {asm5,asm10,asm20}
-                        Sequence divergence: asm5/asm10/asm20 for ~0.1/1/5 percentages. Only works with 'assembly' option. [asm5]
+                        Sequence divergence: asm5/asm10/asm20 for ~0.1/1/5 percentages. 
+                        Only works with 'assembly' option. [asm5]
   -t THREAD             Number of threads. [10]
 ```
 
@@ -109,7 +111,8 @@ Mandatory inputs:
 
 Optional arguments:
   -r REFERENCE         Name of reference. [NC_045512]
-  -p TABLE_PREFIX      Prefix of summary tables for annotated vcf files. Do not include path, except for folder name(s) inside output directory!
+  -p TABLE_PREFIX      Prefix of summary tables for annotated vcf files. 
+                       Do not include path, except for folder name(s) inside output directory!
   -c                   Create CSV format snpEff summary files.
   -l LOG               Name of the log file [Annotate_vcf.log]
   -f {a,b,both}        Format of summary tables [a]
@@ -133,7 +136,8 @@ Mandatory inputs:
   -f {a,b}       Format of summary tables
 
 Optional arguments:
-  -p OUT_PREF    Prefix of the output summary tables.Do not include path, except for folder name(s) inside output directory!
+  -p OUT_PREF    Prefix of the output summary tables.
+                 Do not include path, except for folder name(s) inside output directory!
   -l LOG         Name of the log file [Combine_summary_tables.log]
 ```
 
@@ -152,7 +156,8 @@ Mandatory inputs:
   -f {a,b}        Format of summary tables
 
 Optional arguments:
-  -p OUT_PREF     Prefix of the output summary tables.Do not include path, except for folder name(s) inside output directory!
+  -p OUT_PREF     Prefix of the output summary tables.
+                  Do not include path, except for folder name(s) inside output directory!
   -l LOG          Name of the log file [Remove_from_summary_tables.log]
 ```
 
