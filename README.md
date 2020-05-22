@@ -38,12 +38,11 @@ No installation required. Simply download the repository and unpack by "tar".
 ### 1. Workflow for SARS-CoV-2 sequences
 #### Inputs
 The input file is a fasta formatted database file containing 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020. It is named "sequences0520.fasta".<br>
-This file used strain ID as the fasta header. However, since the strain IDs contain "/", we need to substitute them with something else ("_" in our example):
+The metadata containing region information is also downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020. It is named "metadata0520.tsv".<br>
+These files used strain ID as the fasta header. Since the strain IDs contain "/", we need to substitute them with something else ("_" in our example). We also need to extract region information from metadata to make the region file, and substitute blanks (" ") in the region file:
 ```bash
 sed -i 's/\//_/g' sequences0520.fasta
-```
-We also need to substitube "/" in the region file, and substitute blanks (" ") in the region file:
-```bash
+
 awk -F "\t" '{print $1"\t"$6}' metadata0520.tsv > metadata0520.short.tsv
 sed -i 's/\//_/g' metadata0520.short.tsv
 sed -i 's/ /_/g' metadata0520.short.tsv
