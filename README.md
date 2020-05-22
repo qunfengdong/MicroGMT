@@ -101,7 +101,7 @@ Optional arguments:
   -rg REGION_FILE      Name of the region file (Optional)
   -na                  Skip vcf annotation step, just make summary tables from annotated vcfs.
   -eff PATH_TO_SNPEFF  Absolute path to snpEff.jar. Required if annotae vcf files.
-
+```
 
 
 ## Questions and bug report
