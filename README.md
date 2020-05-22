@@ -30,8 +30,26 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in the summary tables.<br>
 &#160;5. Find_regiosn_for_new_seqs.sh: find new strains/IDs from the region file accompanying the fasta formatted file of assembled sequences that are not already in the summary tables.
 
+## Inputs
+
+## Outputs
+
 ## Tutorial
-### 1. Workflow for SARS-CoV-2
+### 1. Workflow for SARS-CoV-2 sequences
+#### Input
+The input file is a fasta formatted database file containing 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020. It is named "sequences0520.fasta".<br>
+This file used strain ID as the fasta header. However, since the strain IDs contain "/", we need to substitute them with something else ("_" in our example):
+```bash
+sed -i 's/\//_/g' sequences0520.fasta
+```
+We also need to substitube "/" in the region file, and substitute blanks (" ") in the region file:
+```bash
+awk -F "\t" '{print $1"\t"$6}' metadata0520.tsv > metadata0520.short.tsv
+sed -i 's/\//_/g' metadata0520.short.tsv
+sed -i 's/ /_/g' metadata0520.short.tsv
+```
+  
+#### 
 
 
 
@@ -101,6 +119,7 @@ Optional arguments:
 ```
 
 ### combine_summary_tables.py
+``` bash
 usage: combine_summary_tables.py [-h] -i1 IN_TABLE1 -i2 IN_TABLE2 -d OUT_DIR
                                  -f {a,b} [-p OUT_PREF] [-l LOG]
 
@@ -116,8 +135,10 @@ Mandatory inputs:
 Optional arguments:
   -p OUT_PREF    Prefix of the output summary tables.Do not include path, except for folder name(s) inside output directory!
   -l LOG         Name of the log file [Combine_summary_tables.log]
+```
 
 ### remove_from_summary_tables.py
+``` bash
 usage: remove_from_summary_tables.py [-h] -i IN_TABLE -r REMOVE_LIST -d
                                      OUT_DIR -f {a,b} [-p OUT_PREF] [-l LOG]
 
@@ -133,6 +154,7 @@ Mandatory inputs:
 Optional arguments:
   -p OUT_PREF     Prefix of the output summary tables.Do not include path, except for folder name(s) inside output directory!
   -l LOG          Name of the log file [Remove_from_summary_tables.log]
+```
 
 ## Questions and bug report
 Please direct all questions and bug reports to Yue Xing at: yue.july.xing@gmail.com
