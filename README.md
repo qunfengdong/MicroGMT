@@ -27,28 +27,133 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;1. combine_summary_tables.py: combine summary tables from different MicroGMT runs.<br>
 &#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
 &#160;3. analysis_utilities.py: format the summary table for easy access with [R](https://www.r-project.org/), and find unique mutations.<br>
-&#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in the summary tables.<br>
-&#160;5. Find_regiosn_for_new_seqs.sh: find new strains/IDs from the region file accompanying the fasta formatted file of assembled sequences that are not already in the summary tables.
+&#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in existing summary tables.<br>
+&#160;5. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/IDs.
 
 ## Inputs
 
 ## Outputs
 
+## The pre-built summary tables for SARS-CoV-2
+The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). 
+
 ## Tutorial
 ### 1. Workflow for SARS-CoV-2 sequences
-#### Inputs
-The input file is a fasta formatted database file containing 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020. It is named "sequences0520.fasta".<br>
-The metadata containing region information is also downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020. It is named "metadata0520.tsv".<br>
+#### Fasta formatted database sequences
+Here we use fasta formatted database sequences downloaded from [GISAID](https://www.gisaid.org/) as an example. Suppose more strains were added to GISAID after May 20, 2020 and we want to add these strains to the pre-built summary tables.
+
+##### Inputs
+Download the fasta formatted database sequences from [GISAID](https://www.gisaid.org/). It is named "sequences.fasta" in this example.<br>
+Download the metadata containing region information from [GISAID](https://www.gisaid.org/). It is named "metadata.tsv" in this example.<br>
 These files used strain ID as the fasta header. Since the strain IDs contain "/", we need to substitute them with something else ("_" in our example). We also need to extract region information from metadata to make the region file, and substitute blanks (" ") in the region file:
 ```bash
-sed -i 's/\//_/g' sequences0520.fasta
+sed -i 's/\//_/g' sequences.fasta
 
-awk -F "\t" '{print $1"\t"$6}' metadata0520.tsv > metadata0520.short.tsv
-sed -i 's/\//_/g' metadata0520.short.tsv
-sed -i 's/ /_/g' metadata0520.short.tsv
+awk -F "\t" '{print $1"\t"$6}' metadata.tsv > metadata.short.tsv
+sed -i 's/\//_/g' metadata.short.tsv
+sed -i 's/ /_/g' metadata.short.tsv
 ```
-  
-#### 
+
+#### Exclude strains/IDs that are already exist in the pre-built summary tables for the new inputs (optional)
+If you have a new database fasta file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables for the big input database fasta file downloaded from GISAID.**<br>
+All you need are the new database fasta file (sequences.fasta from last step) and the id.list file containing all the strains/IDs from the existing summary tables, which is provided along with the pre-built summary tables. For user supplied genomes, this id.list file is also produced by sequence_to_vcf.py.<br>
+
+MicroGMT will output a list containing all strains/IDs in the new database fasta file (sequences.list in this example), a list containing strains/IDs in the new database fasta file that are not exist in the pre-built summary tables (ids_to_add.list in this example) and a new database fasta file without strains/IDs in the pre-built summary tables (ids_to_add.fasta in this example).
+```bash
+<path_to_MicroGMT>/Find_new_seqs.sh \
+	sequences.fasta id.list \
+	sequences.list ids_to_add.list \
+	ids_to_add.fasta
+```
+You can also extract region information for these IDs from the region file (metadata.short.tsv from last step). It is not necessary, but will increase speed a little bit. You can still use the big region file (metadata.short.tsv from last step). The output region file name is ids_to_add.tsv for this example.
+```bash
+<path_to_MicroGMT>/Find_regiosn_for_new_seqs.sh \
+	ids_to_add.list metadata.short.tsv \
+	ids_to_add.tsv
+```
+
+#### Make summary tables
+Use files from last step to make summary tables:
+```bash
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+	-r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
+  -i assembly -fs ids_to_add.fasta \
+	-o <make_out_dir_1>
+	
+python <path_to_MicroGMT>/annotate_vcf.py \
+	-i <make_out_dir_1> -c -o <make_out_dir_2> \
+	-rg ids_to_add.tsv -f both \
+	-eff <path_to_snpEff>
+```
+The outputs are all the summary tables of format 1 and format 2 for ids_to_add.fasta, log files, as well as the id.list file which contains all the strain IDs in the ids_to_add.fasta file.
+
+#### Remove strains/IDs from summary tables  (optional)
+We noticed that strains may be removed from the GISAID SARS-CoV-2 database. So we designed this utility script to remove unwanted strains from summary tables. You will need a list of strains/IDs that need to be removed. Here we will demostrate how to use it to remove unwanted strains from the pre-built summary tables:<br>
+If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables for the big input database fasta file downloaded from GISAID.**<br>
+```bash
+cat <path_to_summary_tables>/id.list | while read line
+do
+  if grep -q "^${line}$" sequences.list
+  then
+    echo "Sequence ${line} won't be removed, skip."
+  else
+    echo ${line} >> remove.list
+  fi
+done
+```
+Remove strains from format 1 summary tables:
+```bash
+python <path_to_MicroGMT>/remove_from_summary_tables.py \
+	-i <path_to_summary_tables>/all0520.all.form1.txt \
+	-r remove.list -p removed -l removed_a \
+	-f a -d <remove_out_dir>
+```
+Remove strains from format 2 summary tables:
+```bash
+python <path_to_MicroGMT>/remove_from_summary_tables.py \
+	-i <path_to_summary_tables>/all0520.all.form2.txt \
+	-r remove.list -p removed -l removed_b \
+	-f b -d <remove_out_dir>
+```
+
+#### Combine summary tables  (optional)
+We will demonstrate how to combine the summary tables from "Make summary tables" and "Remove strains/IDs from summary tables" sessions above. 
+Combine format 1 summary tables:
+```bash
+python <path_to_MicroGMT>/combine_summary_tables.py \
+	-d <combine_out_dir> -f a -p combined -l combined_a \
+	-i1 <remove_out_dir>/removed.all.form1.txt \
+	-i2 <make_out_dir_2>/out_summary.all.form1.txt
+```
+Combine format 2 summary tables:
+```bash
+python <path_to_MicroGMT>/combine_summary_tables.py \
+	-d <combine_out_dir> -f b -p combined -l combined_b \
+	-i1 <remove_out_dir>/removed.all.form2.txt \
+	-i2 <make_out_dir_2>/out_summary.all.form2.txt
+```
+
+#### Make a new strain/ID list for use next time (optional)
+We will demostrate an optional step of making a new strain/ID list for use next time (final.list in this example). This list contains all strain/IDs in the final output summary tables. Users can use it as the input list file for removing or adding strains/IDs to the new summary tables in the future.<br>
+Please make sure there is no file named "final.list" in your directory before we start.
+```bash
+cat id.list ids_to_add.list > tmp.list
+cat tmp.list | while read line
+do
+  if grep -q "^${line}$" remove.list
+  then
+    echo "Sequence ${line} is removed."
+  else
+    echo ${line} >> final.list
+  fi
+done
+rm -f tmp.list
+```
+
+### 2. Workflow for user-supplied genomes
+
+
+
 
 
 
