@@ -31,15 +31,46 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;5. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/IDs.
 
 ## Inputs
+### The main functions:
+* The fasta genome reference file. For SARS-CoV-2, its fasta genome reference file is located at <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. The accession number ".2" is deleted from the fasta header.
+* The annotation database. For SARS-CoV-2, its annotation database is pre-built and is the default database. For user-supplied genomes, please see "Pre-built annotation database for SARS-CoV-2 and build own annotation databases for user-supplied genomes" for building own databases.
+* A fasta formatted database sequence file, which can contain multiple fasta sequences from multiple samples. Or a fastq formatted single end raw sequence file. Or fastq formatted paired end raw sequence files. Or a fasta formatted contig sequence file from one sample (**Caution: the contig sequence file option is not tested. Use at your own risk**).
+* Optional: A tab delimited region file contain region information of the samples. Format: "strain/ID	region(without blanks)"
+
+### The utility scripts:
+All are optional depending on which script to use. Please see "Quick start" and "Tutorial" for more details.
+* Summary tables.
+* Database sequence files.
+* Region file.
+* Optional: An id list containg the strain/ID in the summary tables. One strain/ID per line. Needed for some utility scripts (please see "Quick start" and "Tutorial" sections). It is produced by sequence_to_vcf.py automatically for fasta formatted database sequence file inputs. Users can modify it by manually adding/deleting IDs from it, or use our utility scripts (see "Quick start" and "Tutorial" sections). For the pre-built summary tables for SARS-CoV-2, it is provided with the summary tables.
 
 ## Outputs
+### sequence_to_vcf.py:
+* An id list containg the strain/ID processed. One strain/ID per line.
+* Vcf format variant calling files. One for each strain/ID.
+* Log file.
 
+### annotate_vcf.py:
+* Vcf format variant calling files with variants annotated. File names end by "anno.vcf".
+* Tab delimited summary file produced by snpEff. File names end by "snpEff_summary.genes.txt".
+* Csv format snpEff summary file (optional, different than "snpEff_summary.genes.txt" file). File names end by "snpEff_summary.csv".
+* Summary tables of all vcf files in the input folder. Columns are mutations. Rows are mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each formate: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|".
+* Log file.
+
+### Utility scripts:
+Optional outputs include the following. Please see "Quick start" and "Tutorial" for more details.
+* Summary tables
+* Reformatted summary tables
+* Region file and fasta database sequence file with selected strains/IDs
+* ID lists to extract strains/IDs from fasta database sequence file and region file.
 
 ## The pre-built summary tables for SARS-CoV-2
-The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). 
+The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Please click here to download them. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
 
-## Build own annotation database for user-supplied genomes
-The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. For user-supplied genomes, you can find out if the genome is supported by snpEff:
+
+## Pre-built annotation database for SARS-CoV-2 and build own annotation databases for user-supplied genomes
+The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.<br>
+For user-supplied genomes, you can find out if the genome is supported by snpEff:
 ```bash
 java -jar <path_to_snpEff>/snpEff.jar databases
 ```
@@ -59,17 +90,17 @@ NC_045512.genome : SARS-CoV-2
 
 2. If the genome uses a non-standard codon table: Add codon table parameter. Not done for SARS-CoV-2.
 
-3. Get the fasta format reference genome sequence. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
+3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" in <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file.
 
-4. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" in <path_to_MicroGMT>/database/NC_045512.
-
-5. Create the database:
+4. Create the database:
 ```bash
 java -jar <path_to_snpEff>/snpEff.jar \
 	build -genbank -c <path_to_MicroGMT>/snpEff.config \
 	-dataDir <path_to_MicroGMT>/database -v NC_045512
 ``` 
-Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.
+Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.<br>
+<br>
+You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
 
 ## Quick start
 ### Running MicroGMT for fasta formatted database sequences
