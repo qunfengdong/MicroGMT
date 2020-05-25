@@ -536,6 +536,27 @@ Optional arguments:
   -l LOG          Name of the log file [Remove_from_summary_tables.log]
 ```
 
+### Find_new_seqs.sh
+```bash
+./Find_new_seqs.sh \
+  <new_database_sequences_file> <id_list_for_existing_summary_tables> \
+  <name_of_new_id_list_for_sequences_in_the_new_database_sequence_file> \
+  <name_of_file_containg_ids_for_sequences_not_in_existing_summary_tables> \
+  <name_of_fasta_file_for_sequences_not_in_existing_summary_tables>
+```
+ 
+### Find_regiosn_for_new_seqs.sh 
+```bash
+./Find_regiosn_for_new_seqs.sh \
+  <file_containg_ids_for_sequences_not_in_existing_summary_tables> <input_region_information_file> \
+  <name_of_region_information_file_containg_ids_for_sequences_not_in_existing_summary_tables>
+```
+
+### analysis_utilities.py
+
+
+
+
 ## Questions and bug report
 Please direct all questions and bug reports to Yue Xing at: yue.july.xing@gmail.com
 
