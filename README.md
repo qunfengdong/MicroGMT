@@ -48,7 +48,7 @@ All are optional depending on which script to use. Please see "Quick start" and 
 ### sequence_to_vcf.py:
 * An id list containg the strain/ID processed. One strain/ID per line.
 * Vcf format variant calling files. One for each strain/ID.
-* Log file.
+* Log file. For raw read sequence input, the log file contains the alignment quality information.
 
 ### annotate_vcf.py:
 * Vcf format variant calling files with variants annotated. File names end by "anno.vcf".
@@ -63,6 +63,7 @@ Optional outputs include the following. Please see "Quick start" and "Tutorial" 
 * Reformatted summary tables
 * Region file and fasta database sequence file with selected strains/IDs
 * ID lists to extract strains/IDs from fasta database sequence file and region file.
+* Log file.
 
 ## The pre-built summary tables for SARS-CoV-2
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Please click here to download them. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
@@ -101,6 +102,7 @@ java -jar <path_to_snpEff>/snpEff.jar \
 Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.<br>
 <br>
 You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
+**Note: The sequence ID need to be exactly the same for fasta reference file and annotation file! If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is with the IDs if they don't match.**
 
 ## Quick start
 ### Running MicroGMT for fasta formatted database sequences
@@ -419,8 +421,10 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 
 ### 2. Workflow for user-supplied genomes
 
-
-
+## Other things you need to know:
+* "-"s in input fasta sequences are interpreted as "N"s by MicroGMT. If they represent gaps, they should be removed from fasta sequences.
+* The coding of indels are slightly different for the same mutations identified by fasta formatted inputs and fastq formatted inputs.
+* For the summary tables of amino acid changes, if there's a mutation but no amino acid change, it is written as blank ("") in the summary table. When reformat by analysis_utilities.py, it is not included in the output table.
 
 ## Arguments
 ### sequence_to_vcf.py
