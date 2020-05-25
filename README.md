@@ -54,7 +54,7 @@ All are optional depending on which script to use. Please see "Quick start" and 
 * Vcf format variant calling files with variants annotated. File names end by "anno.vcf".
 * Tab delimited summary file produced by snpEff. File names end by "snpEff_summary.genes.txt".
 * Csv format snpEff summary file (optional, different than "snpEff_summary.genes.txt" file). File names end by "snpEff_summary.csv".
-* Summary tables of all vcf files in the input folder. Columns are mutations. Rows are mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each formate: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|".
+* Tab delimited summary tables of all vcf files in the input folder. Columns are mutations. Rows are mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each formate: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|".
 * Log file.
 
 ### Utility scripts:
@@ -64,6 +64,8 @@ Optional outputs include the following. Please see "Quick start" and "Tutorial" 
 * Region file and fasta database sequence file with selected strains/IDs
 * ID lists to extract strains/IDs from fasta database sequence file and region file.
 * Log file.
+* analysis_utilities.py reformatting output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region")
+* analysis_utilities.py finding unique mutation output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation")
 
 ## The pre-built summary tables for SARS-CoV-2
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Please click here to download them. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
@@ -217,13 +219,15 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 	<name_of_file_containg_ids_for_sequences_not_in_existing_summary_tables> \
 	<name_of_fasta_file_for_sequences_not_in_existing_summary_tables>
 ```
+For the last two outputs, please make sure there's no files with the same names exist in the output directory before running the command!
 
 ### Extract regions for above strain/IDs from a big region file
 ```bash
 <path_to_MicroGMT>/Find_regiosn_for_new_seqs.sh \
-	<name_of_file_containg_ids_for_sequences_not_in_existing_summary_tables> \
+	<file_containg_ids_for_sequences_not_in_existing_summary_tables> <input_region_information_file> \
 	<name_of_region_information_file_containg_ids_for_sequences_not_in_existing_summary_tables>
 ```
+For the output, please make sure there's no file with the same name exist in the output directory before running the command!
 
 ### Remove strains/IDs from summary tables
 Note: Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!<br>
