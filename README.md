@@ -71,8 +71,10 @@ Optional outputs include the following. Please see "Quick start" and "Tutorial" 
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Please click here to download them. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
 
 
-## Pre-built annotation database for SARS-CoV-2 and build own annotation databases for user-supplied genomes
-The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.<br>
+## Pre-built annotation database for SARS-CoV-2
+The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
+
+## Build own annotation databases for user-supplied genomes
 For user-supplied genomes, you can find out if the genome is supported by snpEff:
 ```bash
 java -jar <path_to_snpEff>/snpEff.jar databases
