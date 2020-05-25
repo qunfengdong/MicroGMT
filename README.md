@@ -103,7 +103,7 @@ java -jar <path_to_snpEff>/snpEff.jar \
 	build -genbank -c <path_to_MicroGMT>/snpEff.config \
 	-dataDir <path_to_MicroGMT>/database -v NC_045512
 ``` 
-Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.<br>
+You may also add more annotation information to create the database. Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.<br>
 <br>
 You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
 **Note: The sequence ID need to be exactly the same for fasta reference file and annotation file! If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is with the IDs if they don't match.**
