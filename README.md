@@ -38,7 +38,40 @@ No installation required. Simply download the repository and unpack by "tar".
 ## The pre-built summary tables for SARS-CoV-2
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). 
 
-## Usage exampels
+## Build own annotation database for user-supplied genomes
+The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. For user-supplied genomes, you can find out if the genome is supported by snpEff:
+```bash
+java -jar <path_to_snpEff>/snpEff.jar databases
+```
+If supported, you can use "-r <database_name>" in annotate_vcf.py to use the database.<br>
+<br>
+If the genome is not supported, you need to build your own database. The following steps are modified from [snpEff manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) to create the database. Here we use SARS-CoV-2 as an example to show the process:
+1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
+Open the file:
+```bash
+vi <path_to_MicroGMT>/snpEff.config
+```
+Add your genome information into the file.
+```bash
+# SARS-CoV-2, NC_045512
+NC_045512.genome : SARS-CoV-2
+```
+
+2. If the genome uses a non-standard codon table: Add codon table parameter. Not done for SARS-CoV-2.
+
+3. Get the fasta format reference genome sequence. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
+
+4. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" in <path_to_MicroGMT>/database/NC_045512.
+
+5. Create the database:
+```bash
+java -jar <path_to_snpEff>/snpEff.jar \
+	build -genbank -c <path_to_MicroGMT>/snpEff.config \
+	-dataDir <path_to_MicroGMT>/database -v NC_045512
+``` 
+Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.
+
+## Quick start
 ### Running MicroGMT for fasta formatted database sequences
 For SART-CoV-2:
 ```bash
