@@ -34,8 +34,103 @@ No installation required. Simply download the repository and unpack by "tar".
 
 ## Outputs
 
+
 ## The pre-built summary tables for SARS-CoV-2
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). 
+
+## Usage exampels
+### Running MicroGMT for fasta formatted database sequences
+For SART-CoV-2:
+```bash
+# Step 1
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
+  -i assembly -fs <database_sequences_file> \
+  -o <out_dir_1>
+
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -o <out_dir_2> \
+  -rg <region_file> -f both \
+  -eff <path_to_snpEff>
+```
+For user-supplied genomes:
+```bash
+# Step 1
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <fasta_reference_file> \
+  -i assembly -fs <database_sequences_file> \
+  -o <out_dir_1>
+
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -o <out_dir_2> \
+  -rg <region_file> -f both \
+  -eff <path_to_snpEff>
+```
+### Running MicroGMT for fastq formatted raw read sequences
+For SART-CoV-2:
+```bash
+# Step 1
+cat <fastq_prefix_list_for_raw_read_files> | while read line
+do
+  python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
+  -i fastq -fq1 ${line}_1.fq -fq2 ${line}_2.fq \
+  -o <out_dir_1> \
+  -gatk <path_to_gatk> \
+  -picard <path_to_picard> \
+  -l ${line}.log -n ${line} -ki
+done
+
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -o <out_dir_2> \
+  -rg <region_file_for_raw_read_files> -f both \
+  -eff <path_to_snpEff>
+```
+Looping is not required for step 1. You may do step 1 for each fastq samples one by one, and run step 2 for all of them together.
+
+For user-supplied genomes:
+```bash
+# Step 1
+cat <fastq_prefix_list_for_raw_read_files> | while read line
+do
+  python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <fasta_reference_file> \
+  -i fastq -fq1 ${line}_1.fq -fq2 ${line}_2.fq \
+  -o <out_dir_1> \
+  -gatk <path_to_gatk> \
+  -picard <path_to_picard> \
+  -l ${line}.log -n ${line} -ki
+done
+
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -o <out_dir_2> \
+  -rg <region_file_for_raw_read_files> -f both \
+  -eff <path_to_snpEff>
+```
+
+### Running MicroGMT for fasta formatted contig sequences
+**Warning: This option is not tested. Use at your own risk!**
+```bash
+# Step 1
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <reference_fasta_file> \
+  -i contig -fs <contig_sequences_file> \
+  -o <out_dir_1>
+
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -o <out_dir_2> \
+  -rg <region_file> -f both \
+  -eff <path_to_snpEff>
+```
+
+###
+
+
 
 ## Tutorial
 ### 1. Workflow for SARS-CoV-2 sequences
@@ -54,7 +149,7 @@ sed -i 's/\//_/g' metadata.short.tsv
 sed -i 's/ /_/g' metadata.short.tsv
 ```
 
-#### Exclude strains/IDs that are already exist in the pre-built summary tables for the new inputs (optional)
+##### Exclude strains/IDs that are already exist in the pre-built summary tables for the new inputs (optional)
 If you have a new database fasta file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables for the big input database fasta file downloaded from GISAID.**<br>
 All you need are the new database fasta file (sequences.fasta from last step) and the id.list file containing all the strains/IDs from the existing summary tables, which is provided along with the pre-built summary tables. For user supplied genomes, this id.list file is also produced by sequence_to_vcf.py.<br>
 
@@ -72,7 +167,7 @@ You can also extract region information for these IDs from the region file (meta
 	ids_to_add.tsv
 ```
 
-#### Make summary tables
+##### Make summary tables
 Use files from last step to make summary tables:
 ```bash
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -87,7 +182,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ```
 The outputs are all the summary tables of format 1 and format 2 for ids_to_add.fasta, log files, as well as the id.list file which contains all the strain IDs in the ids_to_add.fasta file.
 
-#### Remove strains/IDs from summary tables  (optional)
+##### Remove strains/IDs from summary tables  (optional)
 We noticed that strains may be removed from the GISAID SARS-CoV-2 database. So we designed this utility script to remove unwanted strains from summary tables. You will need a list of strains/IDs that need to be removed. Here we will demostrate how to use it to remove unwanted strains from the pre-built summary tables:<br>
 If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables for the big input database fasta file downloaded from GISAID.**<br>
 ```bash
@@ -116,7 +211,7 @@ python <path_to_MicroGMT>/remove_from_summary_tables.py \
 	-f b -d <remove_out_dir>
 ```
 
-#### Combine summary tables  (optional)
+##### Combine summary tables  (optional)
 We will demonstrate how to combine the summary tables from "Make summary tables" and "Remove strains/IDs from summary tables" sessions above. 
 Combine format 1 summary tables:
 ```bash
@@ -133,7 +228,7 @@ python <path_to_MicroGMT>/combine_summary_tables.py \
 	-i2 <make_out_dir_2>/out_summary.all.form2.txt
 ```
 
-#### Make a new strain/ID list for use next time (optional)
+##### Make a new strain/ID list for use next time (optional)
 We will demostrate an optional step of making a new strain/ID list for use next time (final.list in this example). This list contains all strain/IDs in the final output summary tables. Users can use it as the input list file for removing or adding strains/IDs to the new summary tables in the future.<br>
 Please make sure there is no file named "final.list" in your directory before we start.
 ```bash
@@ -150,11 +245,27 @@ done
 rm -f tmp.list
 ```
 
+#### Fastq formatted raw read sequences
+Here we produce summary tables for 10 strains. The fastq file prefix are in the file "ids_for_10_strains.list". The IDs in the summary tables are the fastq file prefix in this example.
+```bash
+cat ids_for_10_strains.list | while read line
+do
+  python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
+  -i fastq -fq1 ${line}_1.fq -fq2 ${line}_2.fq \
+  -o <out_dir_1> \
+  -gatk <path_to_gatk> \
+  -picard <path_to_picard> \
+  -l ${line}.log -n ${line} -ki
+done
+	
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -o <out_dir_2> \
+  -rg 10_strains_region_file.tsv -f both \
+  -eff <path_to_snpEff>
+```
+
 ### 2. Workflow for user-supplied genomes
-
-
-
-
 
 
 
