@@ -114,6 +114,21 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 
 ### Running MicroGMT for fasta formatted contig sequences
 **Warning: This option is not tested. Use at your own risk!**
+For SART-CoV-2:
+```bash
+# Step 1
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
+  -i contig -fs <contig_sequences_file> \
+  -o <out_dir_1>
+
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -o <out_dir_2> \
+  -rg <region_file> -f both \
+  -eff <path_to_snpEff>
+```
+For user-supplied genomes:
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -128,9 +143,68 @@ python <path_to_MicroGMT>/annotate_vcf.py \
   -eff <path_to_snpEff>
 ```
 
-###
+### Extract strain/IDs from a new fasta database sequence file to make a list and a fasta file for sequences that are not in an existing summary tables
+```bash
+<path_to_MicroGMT>/Find_new_seqs.sh \
+	<new_database_sequences_file> <id_list_for_existing_summary_tables> \
+	<name_of_new_id_list_for_sequences_in_the_new_database_sequence_file> \
+	<name_of_file_containg_ids_for_sequences_not_in_existing_summary_tables> \
+	<name_of_fasta_file_for_sequences_not_in_existing_summary_tables>
+```
 
+### Extract regions for above strain/IDs from a big region file
+```bash
+<path_to_MicroGMT>/Find_regiosn_for_new_seqs.sh \
+	<name_of_file_containg_ids_for_sequences_not_in_existing_summary_tables> \
+	<name_of_region_information_file_containg_ids_for_sequences_not_in_existing_summary_tables>
+```
 
+### Remove strains/IDs from summary tables
+Note: Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!<br>
+Remove strains from format 1 summary tables:
+```bash
+python <path_to_MicroGMT>/remove_from_summary_tables.py \
+  -i <prefix>.all.form1.txt -r <remove_id_list> \
+  -f a -d <remove_out_dir>
+```
+Remove strains from format 2 summary tables:
+```bash
+python <path_to_MicroGMT>/remove_from_summary_tables.py \
+  -i <prefix>.all.form2.txt -r <remove_id_list> \
+  -f b -d <remove_out_dir>
+```
+
+### Combine summary tables
+Note: Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!<br>
+Combine format 1 summary tables:
+```bash
+python <path_to_MicroGMT>/combine_summary_tables.py \
+  -d <combine_out_dir> -f a \
+  -i1 <prefix_for_input_table_1>.all.form1.txt \
+  -i2 <prefix_for_input_table_2>.all.form1.txt
+```
+Combine format 2 summary tables:
+```bash
+python <path_to_MicroGMT>/combine_summary_tables.py \
+  -d <combine_out_dir> -f b \
+  -i1 <prefix_for_input_table_1>.all.form2.txt \
+  -i2 <prefix_for_input_table_2>.all.form2.txt
+```
+
+### Downstream utilities
+Note: Input one summary at a time.<br>
+Reformat summary tables:
+```bash
+python <path_to_MicroGMT>/analysis_utilities.py \
+  -i <input_summary_table> \
+  -o <output_table> -t <table_format>
+```
+Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+```bash
+python <path_to_MicroGMT>/analysis_utilities.py \
+  -i <input_summary_table> \
+  -o <output_table> -t <table_format>
+```
 
 ## Tutorial
 ### 1. Workflow for SARS-CoV-2 sequences
@@ -263,6 +337,20 @@ python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir_1> -c -o <out_dir_2> \
   -rg 10_strains_region_file.tsv -f both \
   -eff <path_to_snpEff>
+```
+
+##### Downstream utilities
+Reformat summary tables:
+```bash
+python <path_to_MicroGMT>/analysis_utilities.py \
+  -i <input_summary_table> \
+  -o <output_table> -t <table_format>
+```
+Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+```bash
+python <path_to_MicroGMT>/analysis_utilities.py \
+  -i <input_summary_table> \
+  -o <output_table> -t <table_format>
 ```
 
 ### 2. Workflow for user-supplied genomes
