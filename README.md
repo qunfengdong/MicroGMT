@@ -72,14 +72,20 @@ The pre-built summary tables contain mutation and region information of 29896 SA
 
 
 ## Pre-built annotation database for SARS-CoV-2
-The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
+The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. The version number is 2.
 
 ## Build own annotation databases for user-supplied genomes
 For user-supplied genomes, you can find out if the genome is supported by snpEff:
 ```bash
 java -jar <path_to_snpEff>/snpEff.jar databases
 ```
-If supported, you can use "-r <database_name>" in annotate_vcf.py to use the database.<br>
+If supported, you can download it by:
+```bash
+java -jar <path_to_snpEff>/snpEff.jar download -v <genome_name> \
+	-c <path_to_MicroGMT>/snpEff.config -dataDir <path_to_MicroGMT>/database
+```
+Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!<br>
+Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded database.**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**<br>
 <br>
 If the genome is not supported, you need to build your own database. The following steps are modified from [snpEff manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) to create the database. Here we use SARS-CoV-2 as an example to show the process:
 1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
@@ -89,7 +95,7 @@ vi <path_to_MicroGMT>/snpEff.config
 ```
 Add your genome information into the file.
 ```bash
-# SARS-CoV-2, NC_045512
+# SARS-CoV-2, version NC_045512.2
 NC_045512.genome : SARS-CoV-2
 ```
 
@@ -103,10 +109,11 @@ java -jar <path_to_snpEff>/snpEff.jar \
 	build -genbank -c <path_to_MicroGMT>/snpEff.config \
 	-dataDir <path_to_MicroGMT>/database -v NC_045512
 ``` 
+Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!<br>
 You may also add more annotation information to create the database. Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.<br>
 <br>
-You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512.
-**Note: The sequence ID need to be exactly the same for fasta reference file and annotation file! If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is with the IDs if they don't match.**
+You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Remove the version number in fasta header: change ">NC_045512.2" to ">NC_045512".
+**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
 
 ## Quick start
 ### Running MicroGMT for fasta formatted database sequences
@@ -426,19 +433,49 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 ```
 
 ### 2. Workflow for sequences of E.coli K12 strains
+#### Build the annotation database
+Here we illustrate how to build a new database for E.coli K12 strains by the Genbank file of the reference sequence.
+* Download the full Genbank file of E.coli K12 reference NC_000913 at https://www.ncbi.nlm.nih.gov/nuccore/NC_000913.3/.
+* Rename it by "genes.gbk".
+* Create a new directory with the name of reference under <path_to_MicroGMT>/database/: here we create a directory named "NC_000913" under <path_to_MicroGMT>/database/.
+* Put "genes.gbk" in <path_to_MicroGMT>/database/NC_000913.
+* Open "snpEff.config" under <path_to_MicroGMT> and add the following. Note: do NOT open "snpEff.config" under the snpEff directory!
+```bash
+# E.coli_k12 genome, version NC_000913.3
+NC_000913.genome : E.coli_k12
+````
+* Run the following command to build the database:
+```bash
+java -jar <path_to_snpEff>/snpEff.jar build -genbank -c <path_to_MicroGMT>/snpEff.config \
+-dataDir <path_to_MicroGMT>/database -v NC_000913
+```
+You will also need the fasta formatted reference sequence file. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/NC_000913.3/ as well. Important: Your fasta reference sequence file should not contain version number in the header line. Delete the version number in header line: change ">NC_000913.3" to ">NC_000913"!
+
 #### Fasta formatted database sequences
+The input fasta test file contains 3 E.coli fasta sequences downloaded from NCBI. We just illustrated the core steps here.
+```bash
+# Step 1
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <fasta reference sequence file> \
+  -i assembly -fs <input_fasta_file> \
+  -o <out_dir1>
 
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir1> -c -p <output_prefix> -r NC_000913 \
+  -o <out_dir2> -f both -eff <path_to_snpEff>
 
-
-
-
-
-
+# Find unique mutations
+python <path_to_MicroGMT>/analysis_utilities.py \
+  -i <out_dir2>/<output_prefix>.all.form2.txt \
+  -o <output_table_name> -t b
+```
 
 ## Other things you need to know:
 * "-"s in input fasta sequences are interpreted as "N"s by MicroGMT. If they represent gaps, they should be removed from fasta sequences.
 * The coding of indels are slightly different for the same mutations identified by fasta formatted inputs and fastq formatted inputs.
 * For the summary tables of amino acid changes, if there's a mutation but no amino acid change, it is written as blank ("") in the summary table. When reformat by analysis_utilities.py, it is not included in the output table.
+* If your fasta database sequence file is named by the the sequence ID or one of the sequence IDs in the fasta header, pleas do not direct your output into the same folder as the fasta database sequence file. Otherwise your fasta database sequence file will be deleted!
 
 ## Arguments
 ### sequence_to_vcf.py
