@@ -399,7 +399,7 @@ rm -f tmp.list
 ```
 
 #### Fastq formatted raw read sequences
-Here we produce summary tables for 10 strains. The fastq file prefix are in the file "ids_for_10_strains.list". The IDs in the summary tables are the fastq file prefix in this example.
+Here we produce summary tables for the simulated raw read sequences from 10 strains. The fastq file prefix are in the file "ids_for_10_strains.list". The IDs in the summary tables are the fastq file prefix in this example.
 ```bash
 cat ids_for_10_strains.list | while read line
 do
@@ -452,7 +452,7 @@ java -jar <path_to_snpEff>/snpEff.jar build -genbank -c <path_to_MicroGMT>/snpEf
 You will also need the fasta formatted reference sequence file. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/NC_000913.3/ as well. Important: Your fasta reference sequence file should not contain version number in the header line. Delete the version number in header line: change ">NC_000913.3" to ">NC_000913"!
 
 #### Fasta formatted database sequences
-The input fasta test file contains 3 E.coli fasta sequences downloaded from NCBI. We just illustrated the core steps here.
+The input fasta test file contains 3 E.coli fasta sequences downloaded from NCBI. We just illustrate the core steps here.
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -464,6 +464,28 @@ python <path_to_MicroGMT>/sequence_to_vcf.py \
 python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir1> -c -p <output_prefix> -r NC_000913 \
   -o <out_dir2> -f both -eff <path_to_snpEff>
+
+# Find unique mutations
+python <path_to_MicroGMT>/analysis_utilities.py \
+  -i <out_dir2>/<output_prefix>.all.form2.txt \
+  -o <output_table_name> -t b
+```
+
+#### Fastq formatted database sequences
+The input fastq test file is simulated by the fasta sequence of E.coli K12 strain CP009685.1 downloaded from NCBI. We just illustrate the core steps here.
+```bash
+# Step 1
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <fasta reference sequence file> -i fastq -fq1 <input_fastq_file_R1> \
+  -fq2 <input_fastq_file_R2> -o <out_dir_1> \
+  -gatk <path_to_gatk> -picard <path_to_picard> -ki
+
+# Step 2
+python <path_to_MicroGMT>/annotate_vcf.py \
+  -i <out_dir_1> -c -p <output_prefix> \
+  -o <out_dir_2> \
+  -f both -r NC_000913 \
+  -eff <path_to_snpEff>
 
 # Find unique mutations
 python <path_to_MicroGMT>/analysis_utilities.py \
@@ -600,9 +622,20 @@ Optional arguments:
 ```
 
 ### analysis_utilities.py
+```bash
+usage: analysis_utilities.py [-h] -i IN_TABLE -o OUT_TABLE -t {a,b} [-l LOG]
 
+optional arguments:
+  -h, --help    show this help message and exit
 
+Mandatory inputs:
+  -i IN_TABLE   Input summary table (format 2)
+  -o OUT_TABLE  Processed output table
+  -t {a,b}      Type of analysis (a: format change, b: find unique mutations)
 
+Optional arguments:
+  -l LOG        Directory and name of the log file [Analysis_utilities.log]
+```
 
 ## Questions and bug report
 Please direct all questions and bug reports to Yue Xing at: yue.july.xing@gmail.com
