@@ -502,7 +502,7 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 * The coding of indels for mutations in DNA sequence and their positions on cDNA sequence are slightly different for the same mutations identified by fasta formatted inputs and fastq formatted inputs. So, if you want to find unqiue indels across both fasta and fastq formatted inputs, it is suggested to transform them to a same format first.
 * For the summary tables of amino acid changes, if there's a mutation but no amino acid change, it is written as blank ("") in the summary table. When reformat by analysis_utilities.py, it is not included in the output table.
 * If your fasta database sequence file is named by the the sequence ID or one of the sequence IDs in the fasta header, pleas do not direct your output into the same folder as the fasta database sequence file. Otherwise your fasta database sequence file will be deleted!
-* MicroGMT is designed to find SNPs and indels in the microbial genomes. For fastq formatted raw read inputs, the result may be affected by repeated regions in the genome. Future versions will provide a utility script to mask the repeat regions.
+* MicroGMT is designed to find SNPs and indels in the microbial genomes. For fastq formatted raw read inputs, the result may be affected by repeated regions in the genome. This is due to the nature of short read alignment to the reference genome. Future versions will provide a utility script to mask the repeat regions.
 
 ## Arguments
 ### sequence_to_vcf.py
