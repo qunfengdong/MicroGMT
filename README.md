@@ -68,7 +68,7 @@ Optional outputs include the following. Please see "Quick start" and "Tutorial" 
 * analysis_utilities.py finding unique mutation output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation")
 
 ## The pre-built summary tables for SARS-CoV-2
-The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Please click here to download them. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
+The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Just unzip them and use. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
 
 
 ## Pre-built annotation database for SARS-CoV-2
@@ -434,7 +434,7 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 ```
 
 #### Test dataset
-If you want to try on a small test data first, please click here to download the test data. It contains database sequences and simulated raw read sequnces of 10 randomly selected strains from GISAID database. For database sequences, start from "Make summary tables". Also the formatting steps in "Input" section is already done. 
+If you want to try on a small test data first, please use the provided test datasets. Simply download it and unzip to use. It contains database sequences and simulated raw read sequnces of 10 randomly selected strains from GISAID database. For database sequences, start from "Make summary tables". Also the formatting steps in "Input" section is already done. 
 
 ### 2. Workflow for sequences of E.coli K12 strains
 #### Build the annotation database
@@ -476,7 +476,15 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 ```
 
 #### Fastq formatted database sequences
-The input fastq test file is simulated by the fasta sequence of E.coli K12 strain CP009685.1 downloaded from NCBI. We just illustrate the core steps here.
+You may use the fasta sequence of an E.coli K12 strain to simulate fastq raw read sequences and use them as test data. Example using [ART-illumia](https://www.niehs.nih.gov/research/resources/software/biostatistics/art/index.cfm) for simulation is shown here. It is using HiSeq2500, paired-end, read length of 150 bps, fragment size of 300 bps with standard deviation of 20 bps, fold coverage 0f 50x, and the base quality between 18 to 38.
+```bash
+./art_illumina -i <fasta_sequence_of_E.coli_K12_strain> \
+	-ss HS25 -p -l 150 -f 50 --mflen 300 -s 20 -na \
+	-qL 18 -qU 38 \
+	-o <prefix_of_fastq_output>
+```
+
+The core MicroGMT steps are listed here:
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
