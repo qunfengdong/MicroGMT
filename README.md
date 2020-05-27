@@ -425,7 +425,15 @@ python <path_to_MicroGMT>/analysis_utilities.py \
   -o <output_table> -t <table_format>
 ```
 
-### 2. Workflow for user-supplied genomes
+### 2. Workflow for sequences of E.coli K12 strains
+#### Fasta formatted database sequences
+
+
+
+
+
+
+
 
 ## Other things you need to know:
 * "-"s in input fasta sequences are interpreted as "N"s by MicroGMT. If they represent gaps, they should be removed from fasta sequences.
