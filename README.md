@@ -70,7 +70,6 @@ Optional outputs include the following. Please see "Quick start" and "Tutorial" 
 ## The pre-built summary tables for SARS-CoV-2
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Just unzip them and use. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
 
-
 ## Pre-built annotation database for SARS-CoV-2
 The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. The version number is 2.
 
@@ -84,10 +83,12 @@ If supported, you can download it by:
 java -jar <path_to_snpEff>/snpEff.jar download -v <genome_name> \
 	-c <path_to_MicroGMT>/snpEff.config -dataDir <path_to_MicroGMT>/database
 ```
-Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!<br>
-Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded database.<br>
-**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**<br>
-<br>
+Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!
+
+Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded database.
+
+**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
+
 If the genome is not supported, you need to build your own database. The following steps are modified from [snpEff manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) to create the database. Here we use SARS-CoV-2 as an example to show the process:
 1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
 Open the file:
@@ -110,7 +111,8 @@ java -jar <path_to_snpEff>/snpEff.jar \
 	build -genbank -c <path_to_MicroGMT>/snpEff.config \
 	-dataDir <path_to_MicroGMT>/database -v NC_045512
 ``` 
-Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!<br>
+Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!
+
 You may also add more annotation information to create the database. Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.
 
 You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Remove the version number in fasta header: change ">NC_045512.2" to ">NC_045512".
@@ -276,7 +278,8 @@ For the last two outputs, please make sure there's no files with the same names 
 For the output, please make sure there's no file with the same name exist in the output directory before running the command!
 
 ### Remove strains/IDs from summary tables
-Note: Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!<br>
+**Note:** Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!
+
 Remove strains from format 1 summary tables:
 ```bash
 python <path_to_MicroGMT>/remove_from_summary_tables.py \
@@ -291,7 +294,8 @@ python <path_to_MicroGMT>/remove_from_summary_tables.py \
 ```
 
 ### Combine summary tables
-Note: Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!<br>
+**Note:** Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!
+
 Combine format 1 summary tables:
 ```bash
 python <path_to_MicroGMT>/combine_summary_tables.py \
@@ -308,7 +312,8 @@ python <path_to_MicroGMT>/combine_summary_tables.py \
 ```
 
 ### Downstream utilities
-Note: Input one summary table at a time.<br>
+**Note:** Input one summary table at a time.
+
 Reformat summary tables:
 ```bash
 python <path_to_MicroGMT>/analysis_utilities.py \
@@ -329,8 +334,10 @@ Here we use fasta assembly sequences downloaded from [GISAID](https://www.gisaid
 
 **Inputs**
 
-Download the fasta assembly sequences from [GISAID](https://www.gisaid.org/). It is named "sequences.fasta" in this example.<br>
-Download the metadata containing region information from [GISAID](https://www.gisaid.org/). It is named "metadata.tsv" in this example.<br>
+Download the fasta assembly sequences from [GISAID](https://www.gisaid.org/). It is named "sequences.fasta" in this example.
+
+Download the metadata containing region information from [GISAID](https://www.gisaid.org/). It is named "metadata.tsv" in this example.
+
 These files used strain ID as the fasta header. Since the strain IDs contain "/", we need to substitute them with something else ("_" in our example). We also need to extract region information from metadata to make the region file, and substitute blanks (" ") in the region file:
 ```bash
 sed -i 's/\//_/g' sequences.fasta
@@ -342,8 +349,9 @@ sed -i 's/ /_/g' metadata.short.tsv
 
 **Exclude strains/IDs that are already exist in the pre-built summary tables for the new inputs (optional)**
 
-If you have a new fasta assembly file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**<br>
-All you need are the new fasta assembly file (sequences.fasta from last step) and the id.list file containing all the strains/IDs from the existing summary tables, which is provided along with the pre-built summary tables. For user supplied genomes, this id.list file is also produced by sequence_to_vcf.py.<br>
+If you have a new fasta assembly file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**
+
+All you need are the new fasta assembly file (sequences.fasta from last step) and the id.list file containing all the strains/IDs from the existing summary tables, which is provided along with the pre-built summary tables. For user supplied genomes, this id.list file is also produced by sequence_to_vcf.py.
 
 MicroGMT will output a list containing all strains/IDs in the new fasta assembly file (sequences.list in this example), a list containing strains/IDs in the new fasta assembly file that are not exist in the pre-built summary tables (ids_to_add.list in this example) and a new fasta assembly file without strains/IDs in the pre-built summary tables (ids_to_add.fasta in this example).
 ```bash
@@ -377,8 +385,9 @@ The outputs are all the summary tables of format 1 and format 2 for ids_to_add.f
 
 **Remove strains/IDs from summary tables  (optional)**
 
-We noticed that strains may be removed from the GISAID SARS-CoV-2 database. So we designed this utility script to remove unwanted strains from summary tables. You will need a list of strains/IDs that need to be removed. Here we will demostrate how to use it to remove unwanted strains from the pre-built summary tables:<br>
-If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**<br>
+We noticed that strains may be removed from the GISAID SARS-CoV-2 database. So we designed this utility script to remove unwanted strains from summary tables. You will need a list of strains/IDs that need to be removed. Here we will demostrate how to use it to remove unwanted strains from the pre-built summary tables:
+
+If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**
 ```bash
 cat <path_to_summary_tables>/id.list | while read line
 do
@@ -408,6 +417,7 @@ python <path_to_MicroGMT>/remove_from_summary_tables.py \
 **Combine summary tables  (optional)**
 
 We will demonstrate how to combine the summary tables from "Make summary tables" and "Remove strains/IDs from summary tables" sessions above. 
+
 Combine format 1 summary tables:
 ```bash
 python <path_to_MicroGMT>/combine_summary_tables.py \
@@ -425,7 +435,8 @@ python <path_to_MicroGMT>/combine_summary_tables.py \
 
 **Make a new strain/ID list for use next time (optional)**
 
-We will demostrate an optional step of making a new strain/ID list for use next time (final.list in this example). This list contains all strain/IDs in the final output summary tables. Users can use it as the input list file for removing or adding strains/IDs to the new summary tables in the future.<br>
+We will demostrate an optional step of making a new strain/ID list for use next time (final.list in this example). This list contains all strain/IDs in the final output summary tables. Users can use it as the input list file for removing or adding strains/IDs to the new summary tables in the future.
+
 Please make sure there is no file named "final.list" in your directory before we start.
 ```bash
 cat id.list ids_to_add.list > tmp.list
