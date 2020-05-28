@@ -94,7 +94,7 @@ Open the file:
 ```bash
 vi <path_to_MicroGMT>/snpEff.config
 ```
-Add your genome information into the file.
+&#160;Add your genome information into the file.
 ```bash
 # SARS-CoV-2, version NC_045512.2
 NC_045512.genome : SARS-CoV-2
@@ -111,10 +111,12 @@ java -jar <path_to_snpEff>/snpEff.jar \
 	-dataDir <path_to_MicroGMT>/database -v NC_045512
 ``` 
 Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!<br>
-You may also add more annotation information to create the database. Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.<br>
-<br>
-You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Remove the version number in fasta header: change ">NC_045512.2" to ">NC_045512".<br>
-**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**<br>
+You may also add more annotation information to create the database. Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.
+
+You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Remove the version number in fasta header: change ">NC_045512.2" to ">NC_045512".
+
+**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
+
 Another example is in Tutorial section.
 
 ## Quick start
