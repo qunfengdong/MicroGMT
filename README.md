@@ -16,13 +16,13 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;1. [minimap2](https://github.com/lh3/minimap2)<br>
 &#160;2. [BCFtools](https://samtools.github.io/bcftools/)
 
-* If the inputs are fasta formatted assembled genomes/contigs, you will also need:<br>
+* If the inputs are fastq formatted raw reads, you will also need:<br>
 &#160;1. [GATK/3.8-1-0-Java-1.8.0](https://gatk.broadinstitute.org/hc/en-us)
 &#160;2. [picard/2.18.27-Java-1.8](https://broadinstitute.github.io/picard/)
 &#160;3. [BWA/0.7.17-intel-2018b](http://bio-bwa.sourceforge.net/)
 
 ## Usage
-* The main function of MicroGMT contains two steps: sequence_to_vcf.py, which aligns the input file to the reference genome and identify variants; and annotate_vcf.py, which annotates the variants and output summary tables.
+* The main function of MicroGMT contains two steps: sequence_to_vcf.py (step 1), which aligns the input file(s) to the reference genome and identify variants; and annotate_vcf.py (step 2), which annotates the variants and output summary tables. Note: annotate_vcf.py (step 2) can take in the step 1 outputs from multiple runs, as long as they are in one input folder. So you can first process all samples by step 1, and then run them all together by step 2.
 * MicroGMT also provide additional utility scripts:<br>
 &#160;1. combine_summary_tables.py: combine summary tables from different MicroGMT runs.<br>
 &#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
@@ -34,13 +34,13 @@ No installation required. Simply download the repository and unpack by "tar".
 ### The main functions:
 * The fasta genome reference file. For SARS-CoV-2, its fasta genome reference file is located at <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. The accession number ".2" is deleted from the fasta header.
 * The annotation database. For SARS-CoV-2, its annotation database is pre-built and is the default database. For user-supplied genomes, please see "Pre-built annotation database for SARS-CoV-2 and build own annotation databases for user-supplied genomes" for building own databases.
-* A fasta formatted database sequence file, which can contain multiple fasta sequences from multiple samples. Or a fastq formatted single end raw sequence file. Or fastq formatted paired end raw sequence files. Or a fasta formatted contig sequence file from one sample (**Caution: the contig sequence file option is not tested. Use at your own risk**).
+* A fasta formatted database sequence file, which can contain one or multiple fasta genome assembly sequences from multiple samples (i.e. fasta genome assembly sequences downloaded from NCBI; fasta genome assembly sequences of SARS-CoV-2 downloaded from [GISAID](https://www.gisaid.org/) which contains fasta genome assembly sequences from > 20000 strains in one file. Called "fasta assembly file" below). Or a fastq formatted single/paired end raw sequence file  (called "fastq raw reads file" below). Or a fasta formatted contig sequence file from one sample (i.e. a collection of short fasta sequences from one sample, called "fasta contig file" below. **Caution: the contig sequence file option is not tested. Use at your own risk**).
 * Optional: A tab delimited region file contain region information of the samples. Format: "strain/ID	region(without blanks)"
 
 ### The utility scripts:
 All are optional depending on which script to use. Please see "Quick start" and "Tutorial" for more details.
 * Summary tables.
-* Database sequence files.
+* Fasta assembly file(s).
 * Region file.
 * Optional: An id list containg the strain/ID in the summary tables. One strain/ID per line. Needed for some utility scripts (please see "Quick start" and "Tutorial" sections). It is produced by sequence_to_vcf.py automatically for fasta formatted database sequence file inputs. Users can modify it by manually adding/deleting IDs from it, or use our utility scripts (see "Quick start" and "Tutorial" sections). For the pre-built summary tables for SARS-CoV-2, it is provided with the summary tables.
 
@@ -51,18 +51,18 @@ All are optional depending on which script to use. Please see "Quick start" and 
 * Log file. For raw read sequence input, the log file contains the alignment quality information.
 
 ### annotate_vcf.py:
-* Vcf format variant calling files with variants annotated. File names end by "anno.vcf".
+* Vcf formatted variant calling files with variants annotated. File names end by "anno.vcf".
 * Tab delimited summary file produced by snpEff. File names end by "snpEff_summary.genes.txt".
 * Csv format snpEff summary file (optional, different than "snpEff_summary.genes.txt" file). File names end by "snpEff_summary.csv".
-* Tab delimited summary tables of all vcf files in the input folder. Columns are mutations. Rows are mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each formate: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|".
+* Tab delimited summary tables of all vcf files in the input folder. Columns represent strains/samples/IDs. Rows represent mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each formate: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|". Please see the provided sample output summary tables as examples.
 * Log file.
 
 ### Utility scripts:
 Optional outputs include the following. Please see "Quick start" and "Tutorial" for more details.
 * Summary tables
 * Reformatted summary tables
-* Region file and fasta database sequence file with selected strains/IDs
-* ID lists to extract strains/IDs from fasta database sequence file and region file.
+* Region file and fasta assembly file with selected strains/IDs
+* ID lists to extract strains/IDs from fasta assembly file and region file.
 * Log file.
 * analysis_utilities.py reformatting output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region")
 * analysis_utilities.py finding unique mutation output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation")
@@ -85,7 +85,8 @@ java -jar <path_to_snpEff>/snpEff.jar download -v <genome_name> \
 	-c <path_to_MicroGMT>/snpEff.config -dataDir <path_to_MicroGMT>/database
 ```
 Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!<br>
-Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded database.**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**<br>
+Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded database.<br>
+**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**<br>
 <br>
 If the genome is not supported, you need to build your own database. The following steps are modified from [snpEff manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) to create the database. Here we use SARS-CoV-2 as an example to show the process:
 1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
@@ -99,9 +100,9 @@ Add your genome information into the file.
 NC_045512.genome : SARS-CoV-2
 ```
 
-2. If the genome uses a non-standard codon table: Add codon table parameter. Not done for SARS-CoV-2.
+2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
 
-3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" in <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file.
+3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database.
 
 4. Create the database:
 ```bash
@@ -118,12 +119,12 @@ Another example is in Tutorial section.
 
 ## Quick start
 ### Running MicroGMT for fasta formatted database sequences
-For SART-CoV-2:
+#### For SART-CoV-2:
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
-  -i assembly -fs <database_sequences_file> \
+  -i assembly -fs <fasta_assembly_file> \
   -o <out_dir_1>
 
 # Step 2
@@ -132,25 +133,39 @@ python <path_to_MicroGMT>/annotate_vcf.py \
   -rg <region_file> -f both \
   -eff <path_to_snpEff>
 ```
-For user-supplied genomes:
+
+#### For user-supplied genomes:
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
-  -r <fasta_reference_file> \
-  -i assembly -fs <database_sequences_file> \
+  -r <fasta_reference_sequence_file> \
+  -i assembly -fs <fasta_assembly_file> \
   -o <out_dir_1>
 
 # Step 2
 python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir_1> -c -o <out_dir_2> \
   -rg <region_file> -f both \
+  -r <name_of_reference_genome_database> \
   -eff <path_to_snpEff>
 ```
+
 ### Running MicroGMT for fastq formatted raw read sequences
-For SART-CoV-2:
+#### For SART-CoV-2:
+* For step 1, to run one sample, do the following.
+```bash
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
+  -i fastq -fq1 <fastq_raw_reads_R1_file> -fq2 <fastq_raw_reads_R2_file> \
+  -o <out_dir_1> \
+  -gatk <path_to_gatk> \
+  -picard <path_to_picard> \
+  -l <log_name> -n <output_prefix> -ki
+```
+* For step 1, to run multiple samples at one time, do the following, in which the <fastq_prefix_list> file is a text file containg the prefix of each fastq raw reads file to be processed. One sample per line. In this example, if the fastq files are named test_1.fq and test_2.fq, the prefix is "test". The "-fq1" and "-fq2" paramters take in the full names of the fastq files including absolute or relative path.
 ```bash
 # Step 1
-cat <fastq_prefix_list_for_raw_read_files> | while read line
+cat <fastq_prefix_list> | while read line
 do
   python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
@@ -160,39 +175,56 @@ do
   -picard <path_to_picard> \
   -l ${line}.log -n ${line} -ki
 done
+```
+&#160;Note: you can also change "-fq1" and "-fq2" to "-fq" to run single end fastq_raw_reads samples.
 
+* Step 2 takes in all the vcf files in a folder produced by step 1 at one time. So you can first process all the samples by step 1, and then process them all together by step 2:
+```bash
 # Step 2
 python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir_1> -c -o <out_dir_2> \
   -rg <region_file_for_raw_read_files> -f both \
   -eff <path_to_snpEff>
 ```
-Looping is not required for step 1. You may do step 1 for each fastq samples one by one, and run step 2 for all of them together.
 
-For user-supplied genomes:
+#### For user-supplied genomes:
+* Step 1
 ```bash
-# Step 1
-cat <fastq_prefix_list_for_raw_read_files> | while read line
+cat <fastq_prefix_list> | while read line
 do
   python <path_to_MicroGMT>/sequence_to_vcf.py \
-  -r <fasta_reference_file> \
+  -r <fasta_reference_sequence_file> \
   -i fastq -fq1 ${line}_1.fq -fq2 ${line}_2.fq \
   -o <out_dir_1> \
   -gatk <path_to_gatk> \
   -picard <path_to_picard> \
   -l ${line}.log -n ${line} -ki
 done
+```
+&#160;Or:
+```bash
+python <path_to_MicroGMT>/sequence_to_vcf.py \
+  -r <fasta_reference_sequence_file> \
+  -fq1 <fastq_raw_reads_R1_file> -fq2 <fastq_raw_reads_R2_file> \
+  -o <out_dir_1> \
+  -gatk <path_to_gatk> \
+  -picard <path_to_picard> \
+  -l <log_name> -n <output_prefix> -ki
+```
+&#160;Note: you can also change "-fq1" and "-fq2" to "-fq" to run single end fastq_raw_reads samples.
 
-# Step 2
+* Step 2
+```bash
 python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir_1> -c -o <out_dir_2> \
   -rg <region_file_for_raw_read_files> -f both \
+  -r <name_of_reference_genome_database> \
   -eff <path_to_snpEff>
 ```
 
 ### Running MicroGMT for fasta formatted contig sequences
 **Warning: This option is not tested. Use at your own risk!**
-For SART-CoV-2:
+#### For SART-CoV-2:
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -206,18 +238,20 @@ python <path_to_MicroGMT>/annotate_vcf.py \
   -rg <region_file> -f both \
   -eff <path_to_snpEff>
 ```
-For user-supplied genomes:
+
+#### For user-supplied genomes:
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
-  -r <reference_fasta_file> \
-  -i contig -fs <contig_sequences_file> \
+  -r <fasta_reference_sequence_file> \
+  -i contig -fs <fasta_contig_file> \
   -o <out_dir_1>
 
 # Step 2
 python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir_1> -c -o <out_dir_2> \
   -rg <region_file> -f both \
+  -r <name_of_reference_genome_database> \
   -eff <path_to_snpEff>
 ```
 
@@ -272,7 +306,7 @@ python <path_to_MicroGMT>/combine_summary_tables.py \
 ```
 
 ### Downstream utilities
-Note: Input one summary at a time.<br>
+Note: Input one summary table at a time.<br>
 Reformat summary tables:
 ```bash
 python <path_to_MicroGMT>/analysis_utilities.py \
@@ -288,11 +322,12 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 
 ## Tutorial
 ### 1. Workflow for SARS-CoV-2 sequences
-#### Fasta formatted database sequences
-Here we use fasta formatted database sequences downloaded from [GISAID](https://www.gisaid.org/) as an example. Suppose more strains were added to GISAID after May 20, 2020 and we want to add these strains to the pre-built summary tables.
+#### Fasta assembly file as input
+Here we use fasta assembly sequences downloaded from [GISAID](https://www.gisaid.org/) as an example. Suppose more strains were added to GISAID after May 20, 2020 and we want to add these strains to the pre-built summary tables.
 
-##### Inputs
-Download the fasta formatted database sequences from [GISAID](https://www.gisaid.org/). It is named "sequences.fasta" in this example.<br>
+**Inputs**
+
+Download the fasta assembly sequences from [GISAID](https://www.gisaid.org/). It is named "sequences.fasta" in this example.<br>
 Download the metadata containing region information from [GISAID](https://www.gisaid.org/). It is named "metadata.tsv" in this example.<br>
 These files used strain ID as the fasta header. Since the strain IDs contain "/", we need to substitute them with something else ("_" in our example). We also need to extract region information from metadata to make the region file, and substitute blanks (" ") in the region file:
 ```bash
@@ -303,11 +338,12 @@ sed -i 's/\//_/g' metadata.short.tsv
 sed -i 's/ /_/g' metadata.short.tsv
 ```
 
-##### Exclude strains/IDs that are already exist in the pre-built summary tables for the new inputs (optional)<br>
-If you have a new database fasta file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables for the big input database fasta file downloaded from GISAID.**<br>
-All you need are the new database fasta file (sequences.fasta from last step) and the id.list file containing all the strains/IDs from the existing summary tables, which is provided along with the pre-built summary tables. For user supplied genomes, this id.list file is also produced by sequence_to_vcf.py.<br>
+**Exclude strains/IDs that are already exist in the pre-built summary tables for the new inputs (optional)**
 
-MicroGMT will output a list containing all strains/IDs in the new database fasta file (sequences.list in this example), a list containing strains/IDs in the new database fasta file that are not exist in the pre-built summary tables (ids_to_add.list in this example) and a new database fasta file without strains/IDs in the pre-built summary tables (ids_to_add.fasta in this example).
+If you have a new fasta assembly file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**<br>
+All you need are the new fasta assembly file (sequences.fasta from last step) and the id.list file containing all the strains/IDs from the existing summary tables, which is provided along with the pre-built summary tables. For user supplied genomes, this id.list file is also produced by sequence_to_vcf.py.<br>
+
+MicroGMT will output a list containing all strains/IDs in the new fasta assembly file (sequences.list in this example), a list containing strains/IDs in the new fasta assembly file that are not exist in the pre-built summary tables (ids_to_add.list in this example) and a new fasta assembly file without strains/IDs in the pre-built summary tables (ids_to_add.fasta in this example).
 ```bash
 <path_to_MicroGMT>/Find_new_seqs.sh \
 	sequences.fasta id.list \
@@ -321,7 +357,8 @@ You can also extract region information for these IDs from the region file (meta
 	ids_to_add.tsv
 ```
 
-##### Make summary tables<br>
+**Make summary tables**
+
 Use files from last step to make summary tables:
 ```bash
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -336,9 +373,10 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ```
 The outputs are all the summary tables of format 1 and format 2 for ids_to_add.fasta, log files, as well as the id.list file which contains all the strain IDs in the ids_to_add.fasta file.
 
-##### Remove strains/IDs from summary tables  (optional)<br>
+**Remove strains/IDs from summary tables  (optional)**
+
 We noticed that strains may be removed from the GISAID SARS-CoV-2 database. So we designed this utility script to remove unwanted strains from summary tables. You will need a list of strains/IDs that need to be removed. Here we will demostrate how to use it to remove unwanted strains from the pre-built summary tables:<br>
-If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables for the big input database fasta file downloaded from GISAID.**<br>
+If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**<br>
 ```bash
 cat <path_to_summary_tables>/id.list | while read line
 do
@@ -365,7 +403,8 @@ python <path_to_MicroGMT>/remove_from_summary_tables.py \
 	-f b -d <remove_out_dir>
 ```
 
-##### Combine summary tables  (optional)<br>
+**Combine summary tables  (optional)**
+
 We will demonstrate how to combine the summary tables from "Make summary tables" and "Remove strains/IDs from summary tables" sessions above. 
 Combine format 1 summary tables:
 ```bash
@@ -382,7 +421,8 @@ python <path_to_MicroGMT>/combine_summary_tables.py \
 	-i2 <make_out_dir_2>/out_summary.all.form2.txt
 ```
 
-##### Make a new strain/ID list for use next time (optional)<br>
+**Make a new strain/ID list for use next time (optional)**
+
 We will demostrate an optional step of making a new strain/ID list for use next time (final.list in this example). This list contains all strain/IDs in the final output summary tables. Users can use it as the input list file for removing or adding strains/IDs to the new summary tables in the future.<br>
 Please make sure there is no file named "final.list" in your directory before we start.
 ```bash
@@ -399,8 +439,8 @@ done
 rm -f tmp.list
 ```
 
-#### Fastq formatted raw read sequences
-Here we produce summary tables for the simulated raw read sequences from 10 strains. The fastq file prefix are in the file "ids_for_10_strains.list". The IDs in the summary tables are the fastq file prefix in this example.
+#### Fastq raw reads files as input
+Here we produce summary tables for the simulated fastq raw reads files from 10 strains. The prefix for the fastq files are in the file "ids_for_10_strains.list". The IDs in the summary tables are the prefix for the fastq files in this example.
 ```bash
 cat ids_for_10_strains.list | while read line
 do
@@ -434,7 +474,7 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 ```
 
 #### Test dataset
-If you want to try on a small test data first, please use the provided test datasets. Simply download it and unzip to use. It contains database sequences and simulated raw read sequnces of 10 randomly selected strains from GISAID database. For database sequences, start from "Make summary tables". Also the formatting steps in "Input" section is already done. 
+If you want to try on a small test dataset first, please use the provided test datasets. Simply unzip it to use. It contains database sequences and simulated raw read sequnces of 10 randomly selected strains from GISAID database. For database sequences, start from "Make summary tables". Also the formatting steps in "Input" section is already done. 
 
 ### 2. Workflow for sequences of E.coli K12 strains
 #### Build the annotation database
@@ -453,15 +493,15 @@ NC_000913.genome : E.coli_k12
 java -jar <path_to_snpEff>/snpEff.jar build -genbank -c <path_to_MicroGMT>/snpEff.config \
 -dataDir <path_to_MicroGMT>/database -v NC_000913
 ```
-You will also need the fasta formatted reference sequence file. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/NC_000913.3/ as well. Important: Your fasta reference sequence file should not contain version number in the header line. Delete the version number in header line: change ">NC_000913.3" to ">NC_000913"!
+You will also need the fasta formatted reference sequence file. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/NC_000913.3/ as well. **Important: Your fasta reference sequence file should not contain version number in the header line.** Delete the version number in header line: change ">NC_000913.3" to ">NC_000913"!
 
-#### Fasta formatted database sequences
-The input fasta test file contains 3 E.coli fasta sequences downloaded from NCBI. We just illustrate the core steps here.
+#### Fasta assembly file as input
+The input fasta assembly test file contains 3 E.coli fasta sequences downloaded from NCBI. We just illustrate the core steps here.
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
-  -r <fasta reference sequence file> \
-  -i assembly -fs <input_fasta_file> \
+  -r <fasta_reference_sequence_file> \
+  -i assembly -fs <fasta_assembly_file> \
   -o <out_dir1>
 
 # Step 2
@@ -475,21 +515,21 @@ python <path_to_MicroGMT>/analysis_utilities.py \
   -o <output_table_name> -t b
 ```
 
-#### Fastq formatted database sequences
+#### Fastq raw reads files as input
 You may use the fasta sequence of an E.coli K12 strain to simulate fastq raw read sequences and use them as test data. Example using [ART-illumia](https://www.niehs.nih.gov/research/resources/software/biostatistics/art/index.cfm) for simulation is shown here. It is using HiSeq2500, paired-end, read length of 150 bps, fragment size of 300 bps with standard deviation of 20 bps, fold coverage 0f 50x, and the base quality between 18 to 38.
 ```bash
 ./art_illumina -i <fasta_sequence_of_E.coli_K12_strain> \
 	-ss HS25 -p -l 150 -f 50 --mflen 300 -s 20 -na \
 	-qL 18 -qU 38 \
-	-o <prefix_of_fastq_output>
+	-o <prefix_of_fastq_raw_reads_file>
 ```
 
 The core MicroGMT steps are listed here:
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
-  -r <fasta reference sequence file> -i fastq -fq1 <input_fastq_file_R1> \
-  -fq2 <input_fastq_file_R2> -o <out_dir_1> \
+  -r <fasta_reference_sequence_file> -i fastq -fq1 <fastq_raw_reads_R1_file> \
+  -fq2 <fastq_raw_reads_R2_file> -o <out_dir_1> \
   -gatk <path_to_gatk> -picard <path_to_picard> -ki
 
 # Step 2
@@ -507,10 +547,10 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 
 ## Other things you need to know:
 * "-"s in input fasta sequences are interpreted as "N"s by MicroGMT. If they represent gaps, they should be removed from fasta sequences.
-* The coding of indels for mutations in DNA sequence and their positions on cDNA sequence are slightly different for the same mutations identified by fasta formatted inputs and fastq formatted inputs. So, if you want to find unqiue indels across both fasta and fastq formatted inputs, it is suggested to transform them to a same format first.
+* The coding of indels in DNA sequence and CDS sequence are slightly different for the same mutations identified by fasta formatted inputs and fastq formatted inputs. But the mutation type, effect, position on DNA and the mutation of amino acids are annotated the same. So, if you want to find unqiue indels across both fasta and fastq formatted inputs, it is suggested to transform them to a same format first.
 * For the summary tables of amino acid changes, if there's a mutation but no amino acid change, it is written as blank ("") in the summary table. When reformat by analysis_utilities.py, it is not included in the output table.
-* If your fasta database sequence file is named by the the sequence ID or one of the sequence IDs in the fasta header, pleas do not direct your output into the same folder as the fasta database sequence file. Otherwise your fasta database sequence file will be deleted!
-* MicroGMT is designed to find SNPs and indels in the microbial genomes. For fastq formatted raw read inputs, the result may be affected by repeated regions in the genome. This is due to the nature of short read alignment to the reference genome. Future versions will provide a utility script to mask the repeat regions.
+* If your fasta assembly file is named by the the sequence ID or one of the sequence IDs in the fasta header, pleas do not direct your output into the same folder as the fasta assembly file. Otherwise your fasta assembly file will be deleted!
+* MicroGMT is designed for tracking indels and SNPs among closely related strains instead of detecting large-scale complex genomic rearrangements and duplications. In addition, if you supply fastq raw reads file as input, the accuracy of mutation detection can be slightly affected by unmasked repetitive regions in the reference genome due to the difficult nature of aligning short sequence reads to the reference genome. 
 
 ## Arguments
 ### sequence_to_vcf.py
