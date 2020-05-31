@@ -29,7 +29,7 @@ No installation required. Simply download the repository and unpack by "tar".
 * MicroGMT also provide additional utility scripts:<br>
 &#160;1. combine_summary_tables.py: combine summary tables from different MicroGMT runs.<br>
 &#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
-&#160;3. analysis_utilities.py: reformat the summary table for easy access with [R](https://www.r-project.org/) or other tools, or find unique mutations.<br>
+&#160;3. analysis_utilities.py: reformat the summary table for easy access with [R](https://www.r-project.org/) or other tools, or find unique mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus).<br>
 &#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in existing summary tables.<br>
 &#160;5. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/IDs.
 
