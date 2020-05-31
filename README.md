@@ -1,4 +1,4 @@
-# MicroGMT: A mutation tracker for SARS-CoV-2 and other microbial genome sequences
+# MicroGMT (Microbial Genomics Mtation Tracker): A mutation tracker for SARS-CoV-2 and other microbial genome sequences
 
 ## Version
 This is MicroGMT Version 1.0 (May 2020)
