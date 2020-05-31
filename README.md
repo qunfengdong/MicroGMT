@@ -3,9 +3,9 @@ A mutation tracker for SARS-CoV-2 and other microbial genome sequences
 
 ## Updates
 ### Version 1.1 (May 31 2020) update
-**Important update for SARS-CoV-2:** To handle the different CDS and the -1 ribosomal frameshift in ORF1ab of SARS-CoV-2, attributes were added to the gene ID and gene name of ORF1ab to denote which CDS the mutation is on in the output vcfs and summary tables.
+**Important update for SARS-CoV-2:** To handle the multiple CDS and the -1 ribosomal frameshift in ORF1ab of SARS-CoV-2, attributes were added to the gene ID and gene name of ORF1ab to denote which CDS the mutation is on in the output vcfs and summary tables.
 
-There are two CDS for ORF1ab: 1) CDS joining (266..13468,13468..21555), on which the -1 ribosomal frameshift occurs during translation, produces pp1ab; 2) CDS of (266..13483) produces pp1a.
+There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on which the -1 ribosomal frameshift occurs during translation, produces pp1ab; 2) CDS of (266..13483) produces pp1a.
 
 * For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a.
 * For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
@@ -115,7 +115,15 @@ NC_045512.genome : SARS-CoV-2
 
 2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
 
-3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the different CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues, you need to revise your annotation file accordingly.**
+3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues (i.e. one gene with multiple overlapping CDS), you need to revise your annotation file accordingly.**
+
+* Here we will illustrate how we revised the annotation file "<path_to_MicroGMT>/database/NC_045512/genes.gbk" downloaded from NCBI for SARS-CoV-2:
+
+There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on which the -1 ribosomal frameshift occurs during translation, produces pp1ab; 2) CDS of (266..13483) produces pp1a. They are paritally overlapped. If the annotation is not revised, the mutation position on CDS and peptides will be shifted for positions after 13468 because snpEff (one software used in MicroGMT) fused the two CDS together. The DNA and amino acid changes, and the mutation loci on the genome will still be correct.
+
+This issue is cause by that the two CDS share the same gene ID and name, so snpEff fused them together. To prevent this, for the first CDS, we added "_pp1ab" to its gene name and locus tag (line 86-87 in "genes.gbk"); for the second CDS, we added "_pp1a" to its gene name and locus tag (line 322-323 in "genes.gbk"). After building the database with revised annotation, the resulting summary tables for running SARS-CoV-2 sequences will have the following attributes: For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a. For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
+
+If you have any questions on how to build your own databases on genomes having similar issues, you are more than welcome to email me at yue.july.xing@gmail.com and I'm more than glad to help.
 
 4. Create the database:
 ```bash
