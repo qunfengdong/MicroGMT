@@ -75,7 +75,7 @@ Optional outputs include the following. Please see "Quick start" and "Tutorial" 
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Just unzip them and use. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
 
 ## Pre-built annotation database for SARS-CoV-2
-The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. The version number is 2.
+The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by revised NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512 to handle the different CDS and the -1 ribosomal frameshift of ORF1ab. The version number of the genome is 2.
 
 ## Build own annotation databases for user-supplied genomes
 For user-supplied genomes, you can find out if the genome is supported by snpEff:
@@ -107,7 +107,7 @@ NC_045512.genome : SARS-CoV-2
 
 2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
 
-3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database.
+3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the different CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues, you need to revise your annotation file accordingly.**
 
 4. Create the database:
 ```bash
