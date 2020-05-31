@@ -29,7 +29,7 @@ No installation required. Simply download the repository and unpack by "tar".
 * MicroGMT also provide additional utility scripts:<br>
 &#160;1. combine_summary_tables.py: combine summary tables from different MicroGMT runs.<br>
 &#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
-&#160;3. analysis_utilities.py: format the summary table for easy access with [R](https://www.r-project.org/), and find unique mutations.<br>
+&#160;3. analysis_utilities.py: reformat the summary table for easy access with [R](https://www.r-project.org/) or other tools, or find unique mutations.<br>
 &#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in existing summary tables.<br>
 &#160;5. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/IDs.
 
@@ -57,7 +57,7 @@ All are optional depending on which script to use. Please see "Quick start" and 
 * Vcf formatted variant calling files with variants annotated. File names end by "anno.vcf".
 * Tab delimited summary file produced by snpEff. File names end by "snpEff_summary.genes.txt".
 * Csv format snpEff summary file (optional, different than "snpEff_summary.genes.txt" file). File names end by "snpEff_summary.csv".
-* Tab delimited summary tables of all vcf files in the input folder. Columns represent strains/samples/IDs. Rows represent mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each formate: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|". Please see the provided sample output summary tables as examples.
+* Tab delimited summary tables of all vcf files in the input folder. Columns represent strains/samples/IDs. Rows represent mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each formate: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|". Please see the provided sample output summary tables in "test_dataset" folder as examples.
 * Log file.
 
 ### Utility scripts:
@@ -67,8 +67,8 @@ Optional outputs include the following. Please see "Quick start" and "Tutorial" 
 * Region file and fasta assembly file with selected strains/IDs
 * ID lists to extract strains/IDs from fasta assembly file and region file.
 * Log file.
-* analysis_utilities.py reformatting output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region")
-* analysis_utilities.py finding unique mutation output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation")
+* analysis_utilities.py reformatting output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region"). Please see the provided sample outputs in "test_dataset" folder as examples.
+* analysis_utilities.py finding unique mutation output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation"). Please see the provided sample outputs in "test_dataset" folder as examples.
 
 ## The pre-built summary tables for SARS-CoV-2
 The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Just unzip them and use. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
