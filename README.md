@@ -102,7 +102,7 @@ Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded d
 **Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
 
 If the genome is not supported, you need to build your own database. The following steps are modified from [snpEff manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) to create the database. Here we use SARS-CoV-2 as an example to show the process:
-1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
+#### 1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
 Open the file:
 ```bash
 vi <path_to_MicroGMT>/snpEff.config
@@ -113,9 +113,9 @@ vi <path_to_MicroGMT>/snpEff.config
 NC_045512.genome : SARS-CoV-2
 ```
 
-2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
+#### 2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
 
-3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues (i.e. one gene with multiple overlapping CDS), you need to revise your annotation file accordingly.**
+#### 3. Get genome annotations. Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues (i.e. one gene with multiple overlapping CDS), you need to revise your annotation file accordingly.**
 
 * Here we will illustrate how we revised the annotation file "<path_to_MicroGMT>/database/NC_045512/genes.gbk" downloaded from NCBI for SARS-CoV-2:
 
@@ -125,7 +125,7 @@ This issue is cause by that the two CDS share the same gene ID and name, so snpE
 
 If you have any questions on how to build your own databases on genomes having similar issues, you are more than welcome to email me at yue.july.xing@gmail.com and I'm more than glad to help.
 
-4. Create the database:
+#### 4. Create the database:
 ```bash
 java -jar <path_to_snpEff>/snpEff.jar \
 	build -genbank -c <path_to_MicroGMT>/snpEff.config \
