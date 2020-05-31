@@ -83,8 +83,8 @@ FEATURES             Location/Qualifiers
                      /locus_tag="GU280_gp01"
                      /db_xref="GeneID:43740578"
      CDS             join(266..13468,13468..21555)
-                     /gene="ORF1ab"
-                     /locus_tag="GU280_gp01"
+                     /gene="ORF1ab_pp1ab"
+                     /locus_tag="GU280_gp01_pp1ab"
                      /ribosomal_slippage
                      /note="pp1ab; translated by -1 ribosomal frameshift"
                      /codon_start=1
@@ -319,8 +319,8 @@ FEATURES             Location/Qualifiers
                      /note="nsp16_OMT; 2'-o-MT; produced by pp1ab only"
                      /protein_id="YP_009725311.1"
      CDS             266..13483
-                     /gene="ORF1ab"
-                     /locus_tag="GU280_gp01"
+                     /gene="ORF1ab_pp1a"
+                     /locus_tag="GU280_gp01_pp1a"
                      /note="pp1a"
                      /codon_start=1
                      /product="ORF1a polyprotein"
