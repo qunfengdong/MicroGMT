@@ -13,10 +13,10 @@ def main():
 	group1 = parser.add_argument_group('Mandatory inputs')
 	group1.add_argument('-i1', type=str, dest='in_table1', \
 		required=True, \
-		help='Input summary table 1')
+		help='Input summary table 1 (Only ".all.form1.txt" or ".all.form2.txt" table is required!)')
 	group1.add_argument('-i2', type=str, dest='in_table2', \
 		required=True, \
-		help='Input summary table 2')
+		help='Input summary table 2 (Only ".all.form1.txt" or ".all.form2.txt" table is required! Need to be in same format as in_table1.)')
 	group1.add_argument('-d', type=str, dest='out_dir', \
 		required=True, \
 		help='Output directory')
@@ -51,7 +51,7 @@ def main():
 
 	log_print(param['out_log'],'==================== MicroGMT ====================')
 	log_print(param['out_log'],'             Combine_summary_tables')
-	log_print(param['out_log'],'             Version 1.0  (May 20290)')
+	log_print(param['out_log'],'             Version 1.2  (May 2020)')
 	log_print(param['out_log'],'   Bug report: Yue Xing <yue.july.xing@gmail.com>')
 	log_print(param['out_log'],'======================================================')
 

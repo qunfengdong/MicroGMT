@@ -74,7 +74,7 @@ def main():
 
 	log_print(param['out_log'],'==================== MicroGMT ====================')
 	log_print(param['out_log'],'                  Annotate_vcf')
-	log_print(param['out_log'],'             Version 1.0  (May 20290)')
+	log_print(param['out_log'],'             Version 1.2  (May 2020)')
 	log_print(param['out_log'],'   Bug report: Yue Xing <yue.july.xing@gmail.com>')
 	log_print(param['out_log'],'======================================================')
 

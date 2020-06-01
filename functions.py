@@ -558,7 +558,266 @@ def find_uniq_mutations(fl,out):
 						o.write(hd[s].split("|")[0]+"\t"+hd[s].split("|")[1]+"\t"+"\t".join(ss)+"\n")
 					else:
 						o.write(hd[s].split("|")[0]+"\t"+"Unknown"+"\t"+"\t".join(ss)+"\n")
+	f.close()
+	o.close()
 
+def change_table_format_wanno(fl,out):
+	with open(out,'w') as o:
+		o.write("chr\tpos\tgene_id\tgene_name\tcustom_annot\tmutation\tID\tregion\n")
+		with open(fl,'r') as f:
+			hd=f.readline()
+			hd=hd.rstrip().split("\t")
+			for line in f:
+				line = line.rstrip().split("\t")
+				for i in range(5,len(line)):
+					if line[i]!="R" and line[i]!="":
+						if len(hd[i].split("|"))>1:
+							new=[line[0],line[1],line[2],line[3],line[4],line[i],hd[i].split("|")[0],hd[i].split("|")[1]]
+						else:
+							new=[line[0],line[1],line[2],line[3],line[4],line[i],hd[i].split("|")[0],"Unknown"]
+						o.write("\t".join(new)+"\n")
+	f.close()
+	o.close()
+
+def find_uniq_mutations_wanno(fl,out):
+	with open(out,'w') as o:
+		o.write("ID\tregion\tchr\tpos\tgene_id\tgene_name\tcustom_annot\tmutation\n")
+		with open(fl,'r') as f:
+			hd=f.readline()
+			hd=hd.rstrip().split("\t")
+			for line in f:
+				line = line.rstrip().split("\t")
+				new=line[5:len(line)]
+				a=[i for i,j in enumerate(new) if j!="R"]
+				#b=[j for i,j in enumerate(new) if j!="R"] 
+				if len(a)==1:
+					s=a[0]+5
+					ss=line[0:5]
+					ss.append(line[s])
+					if len(hd[s].split("|"))>1:
+						o.write(hd[s].split("|")[0]+"\t"+hd[s].split("|")[1]+"\t"+"\t".join(ss)+"\n")
+					else:
+						o.write(hd[s].split("|")[0]+"\t"+"Unknown"+"\t"+"\t".join(ss)+"\n")
+
+	f.close()
+	o.close()
+
+def custom_annotation(in_file,in_anno,out_dir,out_pref):
+	tabcg_out_table=os.path.join(out_dir,out_pref+".cds_change.form2.txt")
+	tabpg_out_table=os.path.join(out_dir,out_pref+".prot_change.form2.txt")
+	tabv_out_table=os.path.join(out_dir,out_pref+".mut_type.form2.txt")
+	tabef_out_table=os.path.join(out_dir,out_pref+".effect.form2.txt")
+	tab_out_table=os.path.join(out_dir,out_pref+".all.form2.txt")
+	tabgmut_out_table=os.path.join(out_dir,out_pref+".gene_mut.form2.txt")
+	ln,hd,tabgmut,tabcg,tabpg,tabv,tabef,tab = read_in_table_form2(in_file)
+	sanno={}
+	with open(in_anno) as tmp:
+		for line in tmp:
+			line=line.rstrip().split("\t")
+			for k in tab.keys():
+				if line[0]==k[0]:
+					if int(k[1])>=int(line[1]) and int(k[1])<=int(line[2]):
+						if k in sanno.keys():
+							sanno[k].append(line[3])
+						else: 
+							sanno[k]=[line[3]]
+	for k in sanno.keys():
+		sanno[k]=list(set(sanno[k]))
+	for k in tab.keys():
+		if k in sanno.keys():
+			tab[k]=["|".join(sanno[k])]+tab[k]
+		else:
+			tab[k]=["NULL"]+tab[k]
+	for k in tabgmut.keys():
+		if k in sanno.keys():
+			tabgmut[k]=["|".join(sanno[k])]+tabgmut[k]
+		else:
+			tabgmut[k]=["NULL"]+tabgmut[k]
+	for k in tabcg.keys():
+		if k in sanno.keys():
+			tabcg[k]=["|".join(sanno[k])]+tabcg[k]
+		else:
+			tabcg[k]=["NULL"]+tabcg[k]
+	for k in tabpg.keys():
+		if k in sanno.keys():
+			tabpg[k]=["|".join(sanno[k])]+tabpg[k]
+		else:
+			tabpg[k]=["NULL"]+tabpg[k]
+	for k in tabv.keys():
+		if k in sanno.keys():
+			tabv[k]=["|".join(sanno[k])]+tabv[k]
+		else:
+			tabv[k]=["NULL"]+tabv[k]
+	for k in tabef.keys():
+		if k in sanno.keys():
+			tabef[k]=["|".join(sanno[k])]+tabef[k]
+		else:
+			tabef[k]=["NULL"]+tabef[k]
+	hd2=["Custom_Anno"]+hd
+	write_tabs_form2(tabcg,tabcg_out_table,hd2)
+	write_tabs_form2(tabpg,tabpg_out_table,hd2)
+	write_tabs_form2(tabv,tabv_out_table,hd2)
+	write_tabs_form2(tabef,tabef_out_table,hd2)
+	write_tabs_form2(tab,tab_out_table,hd2)
+	write_tabs_form2(tabgmut,tabgmut_out_table,hd2)
+
+def mask_seqs(in_file,in_msk,out_dir,out_pref):
+	tabcg_out_table=os.path.join(out_dir,out_pref+".cds_change.form2.txt")
+	tabpg_out_table=os.path.join(out_dir,out_pref+".prot_change.form2.txt")
+	tabv_out_table=os.path.join(out_dir,out_pref+".mut_type.form2.txt")
+	tabef_out_table=os.path.join(out_dir,out_pref+".effect.form2.txt")
+	tab_out_table=os.path.join(out_dir,out_pref+".all.form2.txt")
+	tabgmut_out_table=os.path.join(out_dir,out_pref+".gene_mut.form2.txt")
+	ln,hd,tabgmut,tabcg,tabpg,tabv,tabef,tab = read_in_table_form2(in_file)
+	idx=[]
+	with open(in_msk) as tmp:
+		for line in tmp:
+			line=line.rstrip().split("\t")
+			for k in tab.keys():
+				if line[0]==k[0]:
+					if int(k[1])>=int(line[1]) and int(k[1])<=int(line[2]):
+						idx.append(k)
+	idx=list(set(idx))
+	tabn = dict([(key, val) for key, val in tab.items() if key not in idx]) 
+	tabcgn = dict([(key, val) for key, val in tabcg.items() if key not in idx]) 
+	tabpgn = dict([(key, val) for key, val in tabpg.items() if key not in idx]) 
+	tabvn = dict([(key, val) for key, val in tabv.items() if key not in idx]) 
+	tabefn = dict([(key, val) for key, val in tabef.items() if key not in idx]) 
+	tabgmutn = dict([(key, val) for key, val in tabgmut.items() if key not in idx]) 
+	write_tabs_form2(tabcgn,tabcg_out_table,hd)
+	write_tabs_form2(tabpgn,tabpg_out_table,hd)
+	write_tabs_form2(tabvn,tabv_out_table,hd)
+	write_tabs_form2(tabefn,tabef_out_table,hd)
+	write_tabs_form2(tabn,tab_out_table,hd)
+	write_tabs_form2(tabgmutn,tabgmut_out_table,hd)
+
+def mutation_summary(out_log,fl,fid,out,fm):
+	with open(out,'w') as o:
+		with open(fl,'r') as f:
+			hd=f.readline()
+			hd=hd.rstrip().split("\t")
+			a=[i for i,j in enumerate(hd) if fid in j]
+			if len(a)==0:
+				scn_print("Error: The selected ID is not in the summary table!")
+				log_print(out_log,"Error: The selected ID is not in the summary table!")
+				exit(1)
+			elif len(a)>1:
+				scn_print("Warning: This ID is duplicated in the summary table! Only the first one will be used here.")
+				log_print(out_log,"Warning: This ID is duplicated in the summary table! Only the first one will be used here.")
+				s=a[0]
+			else:
+				s=a[0]
+			hd2=hd[4:s]+hd[(s+1):]
+			if fm=="l":
+				o.write("ID\tregion\tchr\tpos\tgene_id\tgene_name\tmutation\tmutation_type\t"+"\t".join(hd2)+"\n")
+			else:
+				o.write("ID\tregion\tchr\tpos\tgene_id\tgene_name\tmutation\tmutation_type\n")
+			for line in f:
+				line = line.rstrip().split("\t")
+				#sam=line[s]
+				if line[s]!="R":
+					muts=line[4:s]+line[(s+1):]
+					b=[i for i,j in enumerate(muts) if j!="R"]
+					if len(b)==0:
+						if fm=="l":
+							if len(hd[s].split("|"))>1:
+								o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Unique_mutation"+"\t"+"\t".join(muts)+"\n")
+							else:
+								o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Unique_mutation"+"\t"+"\t".join(muts)+"\n")
+						else:
+							if len(hd[s].split("|"))>1:
+								o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Unique_mutation\n")
+							else:
+								o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Unique_mutation\n")
+					else:
+						c=[i for i,j in enumerate(muts) if j==line[s]]
+						if len(c)==0:
+							if fm=="l":
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"New_mutation"+"\t"+"\t".join(muts)+"\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"New_mutation"+"\t"+"\t".join(muts)+"\n")
+							else:
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"New_mutation\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"New_mutation\n")
+						else:
+							if fm=="l":
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Known_mutation"+"\t"+"\t".join(muts)+"\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Known_mutation"+"\t"+"\t".join(muts)+"\n")
+							else:
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Known_mutation\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[s]+"\t"+"Known_mutation\n")
+	f.close()
+	o.close()
+
+def mutation_summary_wanno(out_log,fl,fid,out,fm):
+	with open(out,'w') as o:
+		with open(fl,'r') as f:
+			hd=f.readline()
+			hd=hd.rstrip().split("\t")
+			a=[i for i,j in enumerate(hd) if fid in j]
+			if len(a)==0:
+				scn_print("Error: The selected ID is not in the summary table!")
+				log_print(out_log,"Error: The selected ID is not in the summary table!")
+				exit(1)
+			elif len(a)>1:
+				scn_print("Warning: This ID is duplicated in the summary table! Only the first one will be used here.")
+				log_print(out_log,"Warning: This ID is duplicated in the summary table! Only the first one will be used here.")
+				s=a[0]
+			else:
+				s=a[0]
+			hd2=hd[5:s]+hd[(s+1):]
+			if fm=="l":
+				o.write("ID\tregion\tchr\tpos\tgene_id\tgene_name\tcustom_annot\tmutation\tmutation_type\t"+"\t".join(hd2)+"\n")
+			else:
+				o.write("ID\tregion\tchr\tpos\tgene_id\tgene_name\tcustom_annot\tmutation\tmutation_type\n")
+			for line in f:
+				line = line.rstrip().split("\t")
+				#sam=line[s]
+				if line[s]!="R":
+					muts=line[5:s]+line[(s+1):]
+					b=[i for i,j in enumerate(muts) if j!="R"]
+					if len(b)==0:
+						if fm=="l":
+							if len(hd[s].split("|"))>1:
+								o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Unique_mutation"+"\t"+"\t".join(muts)+"\n")
+							else:
+								o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Unique_mutation"+"\t"+"\t".join(muts)+"\n")
+						else:
+							if len(hd[s].split("|"))>1:
+								o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Unique_mutation\n")
+							else:
+								o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Unique_mutation\n")
+					else:
+						c=[i for i,j in enumerate(muts) if j==line[s]]
+						if len(c)==0:
+							if fm=="l":
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"New_mutation"+"\t"+"\t".join(muts)+"\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"New_mutation"+"\t"+"\t".join(muts)+"\n")
+							else:
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"New_mutation\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"New_mutation\n")
+						else:
+							if fm=="l":
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Known_mutation"+"\t"+"\t".join(muts)+"\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Known_mutation"+"\t"+"\t".join(muts)+"\n")
+							else:
+								if len(hd[s].split("|"))>1:
+									o.write(fid+"\t"+hd[s].split("|")[1]+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Known_mutation\n")
+								else:
+									o.write(fid+"\t"+"UnKnown"+"\t"+line[0]+"\t"+line[1]+"\t"+line[2]+"\t"+line[3]+"\t"+line[4]+"\t"+line[s]+"\t"+"Known_mutation\n")
 	f.close()
 	o.close()
 
