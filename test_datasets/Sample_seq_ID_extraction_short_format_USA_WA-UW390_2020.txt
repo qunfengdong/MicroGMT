@@ -1,0 +1,8 @@
+ID	region	chr	pos	gene_id	gene_name	custom_annot	mutation	mutation_type
+USA_WA-UW390_2020	North_America	NC_045512	8782	GU280_gp01_pp1a	ORF1ab_pp1a	nsp4	C|T|protein_coding|synonymous_variant|LOW|8517C>T|Ser2839Ser	Known_mutation
+USA_WA-UW390_2020	North_America	NC_045512	17858	GU280_gp01_pp1ab	ORF1ab_pp1ab	helicase	A|G|protein_coding|missense_variant|MODERATE|17594A>G|Tyr5865Cys	Known_mutation
+USA_WA-UW390_2020	North_America	NC_045512	28144	GU280_gp09	ORF8	ORF8_protein	T|C|protein_coding|missense_variant|MODERATE|251T>C|Leu84Ser	Known_mutation
+USA_WA-UW390_2020	North_America	NC_045512	17747	GU280_gp01_pp1ab	ORF1ab_pp1ab	helicase	C|T|protein_coding|missense_variant|MODERATE|17483C>T|Pro5828Leu	Unique_mutation
+USA_WA-UW390_2020	North_America	NC_045512	18060	GU280_gp01_pp1ab	ORF1ab_pp1ab	3'-to-5'_exonuclease	C|T|protein_coding|synonymous_variant|LOW|17796C>T|Leu5932Leu	Unique_mutation
+USA_WA-UW390_2020	North_America	NC_045512	22984	GU280_gp02	S	surface_glycoprotein	G|A|protein_coding|synonymous_variant|LOW|1422G>A|Gln474Gln	Unique_mutation
+USA_WA-UW390_2020	North_America	NC_045512	27384	GU280_gp06	ORF6	ORF6_protein	T|C|protein_coding|synonymous_variant|LOW|183T>C|Asp61Asp	Unique_mutation
