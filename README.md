@@ -37,7 +37,7 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;2. [BCFtools](https://samtools.github.io/bcftools/)
 
 * If the inputs are fastq formatted raw reads, you will also need:<br>
-&#160;1. [GATK 3.8](https://gatk.broadinstitute.org/hc/en-us)
+&#160;1. [GATK 3.8](https://gatk.broadinstitute.org/hc/en-us): NOT GATK 4 because GATK 3.8 has the Indel Realigner to use.
 &#160;2. [picard 2.18 or above](https://broadinstitute.github.io/picard/)
 &#160;3. [BWA](http://bio-bwa.sourceforge.net/)
 
