@@ -853,7 +853,7 @@ Optional arguments:
 
 ### Find_new_seqs.sh
 ```bash
-./Find_new_seqs.sh \
+<path_to_MicroGMT>/Find_new_seqs.sh \
   <new_database_sequences_file> <id_list_for_existing_summary_tables> \
   <name_of_new_id_list_for_sequences_in_the_new_database_sequence_file> \
   <name_of_file_containg_ids_for_sequences_not_in_existing_summary_tables> \
@@ -862,25 +862,87 @@ Optional arguments:
  
 ### Find_regiosn_for_new_seqs.sh 
 ```bash
-./Find_regiosn_for_new_seqs.sh \
+<path_to_MicroGMT>/Find_regiosn_for_new_seqs.sh \
   <file_containg_ids_for_sequences_not_in_existing_summary_tables> <input_region_information_file> \
   <name_of_region_information_file_containg_ids_for_sequences_not_in_existing_summary_tables>
+```
+### get_ids.sh
+```bash
+<path_to_MicroGMT>/get_ids.sh \
+	<form2_summary_table> <name_of_id_list>
+```
+
+### mask_sequences.py
+```bash
+usage: mask_sequences.py [-h] -i IN_TABLE -m MASK -d OUT_DIR [-p OUT_PREF]
+                         [-l LOG]
+			 
+optional arguments:
+  -h, --help   show this help message and exit
+
+Mandatory inputs:
+  -i IN_TABLE  Input summary table (Only ".all.form2.txt" tables)
+  -m MASK      Input mask file
+  -d OUT_DIR   Output directory
+
+Optional arguments:
+  -p OUT_PREF  Prefix of the output annotated summary tables. Do not include path, except for folder name(s) inside output directory!
+  -l LOG       Name of the log file [Mask_sequences.log]
+```
+
+### add_custom_annotation.py
+```bash
+usage: add_custom_annotation.py [-h] -i IN_TABLE -a CUSTOM_ANNOT -d OUT_DIR
+                                [-p OUT_PREF] [-l LOG]
+
+optional arguments:
+  -h, --help       show this help message and exit
+
+Mandatory inputs:
+  -i IN_TABLE      Input summary table (Only ".all.form2.txt" tables)
+  -a CUSTOM_ANNOT  Input custom annotation table
+  -d OUT_DIR       Output directory
+
+Optional arguments:
+  -p OUT_PREF      Prefix of the output annotated summary tables. Do not include path, except for folder name(s) inside output directory!
+  -l LOG           Name of the log file [Add_custom_annotation.log]
 ```
 
 ### analysis_utilities.py
 ```bash
-usage: analysis_utilities.py [-h] -i IN_TABLE -o OUT_TABLE -t {a,b} [-l LOG]
+usage: analysis_utilities.py [-h] -i IN_TABLE -o OUT_TABLE -t {a,b} -a {y,n}
+                             [-l LOG]
 
 optional arguments:
   -h, --help    show this help message and exit
 
 Mandatory inputs:
-  -i IN_TABLE   Input summary table (format 2)
+  -i IN_TABLE   Input summary table (format 2 table)
   -o OUT_TABLE  Processed output table
   -t {a,b}      Type of analysis (a: format change, b: find unique mutations)
+  -a {y,n}      The summary table include custom annotation or not? (y: yes, n: no)
 
 Optional arguments:
   -l LOG        Directory and name of the log file [Analysis_utilities.log]
+
+```
+### sequence_ID_extractor.py
+```bash
+usage: sequence_ID_extractor.py [-h] -i IN_TABLE -o OUT_TABLE -id SEQ_ID -f
+                                {l,s} -a {y,n} [-l LOG]
+
+optional arguments:
+  -h, --help    show this help message and exit
+
+Mandatory inputs:
+  -i IN_TABLE   Input summary table (format 2 table)
+  -o OUT_TABLE  Processed output table
+  -id SEQ_ID    Strain/sequence ID to extract
+  -f {l,s}      The output table format (l: long format, s: short format)
+  -a {y,n}      The summary table include custom annotation or not? (y: yes, n: no)
+
+Optional arguments:
+  -l LOG        Directory and name of the log file [ID_extraction.log]
 ```
 
 ## Questions and bug report
