@@ -160,6 +160,7 @@ Another example is in Tutorial section.
 ### Running MicroGMT for fasta formatted database sequences
 #### For SART-CoV-2:
 Input: fasta_assembly_file, region_file
+
 Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
 
 ```bash
@@ -178,6 +179,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 
 #### For user-supplied genomes:
 Input: fasta_assembly_file, fasta_reference_sequence_file, reference_genome_database, region_file
+
 Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
 
 ```bash
@@ -198,6 +200,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ### Running MicroGMT for fastq formatted raw read sequences
 #### For SART-CoV-2:
 Input: fastq_raw_reads file(s) (single or paired-end), region_file
+
 Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
 
 * For step 1, to run one sample, do the following.
@@ -237,6 +240,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 
 #### For user-supplied genomes:
 Input: fastq_raw_reads file(s) (single or paired-end), fasta_reference_sequence_file, reference_genome_database, region_file
+
 Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
 
 * Step 1
@@ -277,6 +281,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 **Warning: This option is not tested. Use at your own risk!**
 #### For SART-CoV-2:
 Input: contig_sequences_file, region_file
+
 Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
 
 ```bash
@@ -295,6 +300,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 
 #### For user-supplied genomes:
 Input: contig_sequences_file, fasta_reference_sequence_file, reference_genome_database, region_file
+
 Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
 
 ```bash
@@ -314,6 +320,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 
 ### Extract strain/IDs from a new fasta database sequence file to make a list and a fasta file for sequences that are not in an existing summary tables
 Input: new_database_sequences_file, id_list_for_existing_summary_tables
+
 Output: new_id_list_for_sequences_in_the_new_database_sequence_file, file_containg_ids_for_sequences_not_in_existing_summary_tables, fasta_file_for_sequences_not_in_existing_summary_tables
 
 For the last two outputs, please make sure there's no files with the same names exist in the output directory before running the command!
@@ -328,6 +335,7 @@ For the last two outputs, please make sure there's no files with the same names 
 
 ### Extract regions for above strain/IDs from a big region file
 Input: file_containg_ids_for_sequences_not_in_existing_summary_tables, input_region_information_file
+
 Output: region_information_file_containg_ids_for_sequences_not_in_existing_summary_tables
 
 For the output, please make sure there's no file with the same name exist in the output directory before running the command!
@@ -340,6 +348,7 @@ For the output, please make sure there's no file with the same name exist in the
 
 ### Remove strains/sequences from summary tables
 Input: summary table (**Only \<prefix>.all.form1.txt or \<prefix>.all.form2.txt is required**), list of strain/sequence ids to be removed
+
 Output: **All** kinds of summary tables of form1 or form 2 (depending on your input table form), with strains/sequences removed
 
 Remove strains from format 1 summary tables:
@@ -357,6 +366,7 @@ python <path_to_MicroGMT>/remove_from_summary_tables.py \
 
 ### Combine summary tables
 Input: summary tables (**Only \<prefix>.all.form1.txt or \<prefix>.all.form2.txt is required. The input summary tables need to be in a same form**)
+
 Output: **All** kinds of combined summary tables of form1 or form 2 (depending on your input table form)
 
 Combine format 1 summary tables:
@@ -375,6 +385,7 @@ python <path_to_MicroGMT>/combine_summary_tables.py \
 ```
 ### Extract strain/sequence IDs from summary tables
 Input: a form2 summary table
+
 Output: a strain/sequence id list for that summary table (it's also the strain/sequence id list for the form1 summary table of the same dataset)
 
 ```bash
@@ -385,6 +396,7 @@ For the output, please make sure there's no file with the same name exist in the
 
 ### Mask regions on the genome for summary tables
 Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**), mask file (tab-delimited, "chr  mask_start  mask_end" one per line)
+
 Output: **All** kinds of masked form2 summary tables.
 
 ```bash
@@ -395,6 +407,7 @@ python <path_to_MicroGMT>/mask_sequences.py \
 ### Add custom annotations
 #### For SARS-CoV-2:
 Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**)
+
 Output: **All** kinds of form2 summary tables with custom annotations added as a column.
 
 ```bash
@@ -406,6 +419,7 @@ You may also use your own custom annotation file.
 
 #### For user-supplied genomes:
 Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**), custom annotation file (tab-delimited, "chr  feature_start  feature_end  feature_name" one per line)
+
 Output: **All** kinds of form2 summary tables with custom annotations added as a column.
 
 ```bash
@@ -615,7 +629,7 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 
 You may combine the summary tables produced from both the fasta assembly file and the fastq raw reads files.
 
-### Add custom annotations (optional)
+#### Add custom annotations (optional)
 For SARS-CoV-2, a custom annotation file is provided at <path_to_MicroGMT>/NC_045512_source_files/NC_045512_cus_anno.txt. It contains mature peptide and stem loop information of SARS-CoV-2.
 
 ```bash
