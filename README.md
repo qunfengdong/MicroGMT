@@ -80,7 +80,7 @@ All are optional depending on which script to use. Please see "Quick start" and 
 * Log file.
 
 ### Utility scripts:
-Optional outputs include the following. For more details about the outputs of each utility script, please see "Quick start" and "Tutorial".
+Optional outputs include the following. For more details about the outputs of each utility script, please see "Quick start" and "Tutorial". For sample outputs please look at "test_dataset" folder.
 * Summary tables
 * Reformatted summary tables and other useful tables produced based on summary tables
 * Region file and fasta assembly file with selected strains/IDs
@@ -416,7 +416,7 @@ python <path_to_MicroGMT>/add_custom_annotation.py \
 ### Downstream utilities: analysis_utilities.py
 #### Reformat summary tables:
 * Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
-* Output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region" for form2 summary table, and "chr pos gene_id gene_name custom_annotation mutation strain_ID region" for custom annotated form2 summary table). Please see the provided sample outputs in "test_dataset" folder as examples.
+* Output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region" for form2 summary table, and "chr pos gene_id gene_name custom_annotation mutation strain_ID region" for custom annotated form2 summary table).
 
 ```bash
 # form2 summary table as input
@@ -432,7 +432,7 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 
 #### Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
 * Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
-* Output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation" for form2 summary table, and "strain_ID region chr pos gene_id gene_name custom_annotation mutation" for custom annotated form2 summary table). Please see the provided sample outputs in "test_dataset" folder as examples.
+* Output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation" for form2 summary table, and "strain_ID region chr pos gene_id gene_name custom_annotation mutation" for custom annotated form2 summary table).
 
 ```bash
 # form2 summary table as input
@@ -463,7 +463,7 @@ python <path_to_MicroGMT>/sequence_ID_extractor.py \
   ```
 
 ## Tutorial
-### 1. Workflow for SARS-CoV-2 sequences
+### 1. Example workflow for SARS-CoV-2 sequences
 #### Fasta assembly file as input
 Here we use fasta assembly sequences downloaded from [GISAID](https://www.gisaid.org/) as an example. Suppose more strains were added to GISAID after May 20, 2020 and we want to add these strains to the pre-built summary tables.
 
@@ -587,6 +587,12 @@ done
 rm -f tmp.list
 ```
 
+Alternatively, you may just use get_ids.sh:
+```bash
+<path_to_MicroGMT>/get_ids.sh \
+	out_summary.all.form2.txt final.list
+```
+
 #### Fastq raw reads files as input
 Here we produce summary tables for the simulated fastq raw reads files from 10 strains. The prefix for the fastq files are in the file "ids_for_10_strains.list". The IDs in the summary tables are the prefix for the fastq files in this example.
 ```bash
@@ -607,18 +613,36 @@ python <path_to_MicroGMT>/annotate_vcf.py \
   -eff <path_to_snpEff>
 ```
 
-#### Downstream utilities
-Reformat summary tables:
+You may combine the summary tables produced from both the fasta assembly file and the fastq raw reads files.
+
+### Add custom annotations (optional)
+For SARS-CoV-2, a custom annotation file is provided at <path_to_MicroGMT>/NC_045512_source_files/NC_045512_cus_anno.txt. It contains mature peptide and stem loop information of SARS-CoV-2.
+
 ```bash
-python <path_to_MicroGMT>/analysis_utilities.py \
-  -i <input_summary_table> \
-  -o <output_table> -t <table_format>
+python <path_to_MicroGMT>/add_custom_annotation.py \
+  -i <prefix>.all.form2.txt -d <out_dir> \
+  -a <path_to_MicroGMT>/NC_045512_source_files/NC_045512_cus_anno.txt
 ```
-Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+
+#### Downstream utilities (optional)
+Reformat custom annotated summary tables:
 ```bash
 python <path_to_MicroGMT>/analysis_utilities.py \
-  -i <input_summary_table> \
-  -o <output_table> -t <table_format>
+  -i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
+  -t a -a y
+```
+Find unqiue mutations in custom annotated summary tables (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+```bash
+python <path_to_MicroGMT>/analysis_utilities.py \
+  -i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
+  -t b -a y
+```
+
+#### Extract mutation informtation for a specific strain/sequence ID from custom annotated summary tables (optional)
+```bash
+python <path_to_MicroGMT>/sequence_ID_extractor.py \
+  -i <custom_annotated_form2_summary_table> -o <name_of_output_file> \
+  -id <user-supplied_strain_or_sequence_ID> -f l -a y
 ```
 
 #### Test dataset
@@ -691,6 +715,13 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 python <path_to_MicroGMT>/analysis_utilities.py \
   -i <out_dir2>/<output_prefix>.all.form2.txt \
   -o <output_table_name> -t b
+```
+
+#### Mask regions on the genome for summary tables
+For example, mask repeat regions.
+```bash
+python <path_to_MicroGMT>/mask_sequences.py \
+  -i <prefix>.all.form2.txt -d <out_dir> -m <input_mask_file>
 ```
 
 ## Other things you need to know:
