@@ -421,13 +421,13 @@ python <path_to_MicroGMT>/add_custom_annotation.py \
 ```bash
 # form2 summary table as input
 python <path_to_MicroGMT>/analysis_utilities.py \
--i <form2_summary_table> -o <name_of_output_table> \
--t a -a n
+  -i <form2_summary_table> -o <name_of_output_table> \
+  -t a -a n
 
 # custom annotated form2 summary table as input
 python <path_to_MicroGMT>/analysis_utilities.py \
--i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
--t a -a y
+  -i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
+  -t a -a y
 ```
 
 #### Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
@@ -437,21 +437,30 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 ```bash
 # form2 summary table as input
 python <path_to_MicroGMT>/analysis_utilities.py \
--i <form2_summary_table> -o <name_of_output_table> \
--t b -a n
+  -i <form2_summary_table> -o <name_of_output_table> \
+  -t b -a n
 
 # custom annotated form2 summary table as input
 python <path_to_MicroGMT>/analysis_utilities.py \
--i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
--t b -a y
+  -i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
+  -t b -a y
 ```
 
-### 
+### Extract mutation informtation for a specific strain/sequence ID
+* Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
+* Output: tab delimited file with mutation informtation for a user-supplied strain/sequence ID. Long form: "ID  region  chr  pos  gene_id  gene_name  custom_annotation (if input custom annotated form2 summary table)  mutation  mutation_type" + other strains/sequences' mutation information on the mutation loci of this strain/sequence. Short form: "ID  region  chr  pos  gene_id  gene_name  custom_annotation (if input custom annotated form2 summary table)  mutation  mutation_type".
 
+```bash
+# form2 summary table as input
+python <path_to_MicroGMT>/sequence_ID_extractor.py \
+  -i <form2_summary_table> -o <name_of_output_file> \
+  -id <user-supplied_strain_or_sequence_ID> -f <form_of_output> -a n
 
-
-
-
+# custom annotated form2 summary table as input
+python <path_to_MicroGMT>/sequence_ID_extractor.py \
+  -i <custom_annotated_form2_summary_table> -o <name_of_output_file> \
+  -id <user-supplied_strain_or_sequence_ID> -f <form_of_output> -a y
+  ```
 
 ## Tutorial
 ### 1. Workflow for SARS-CoV-2 sequences
