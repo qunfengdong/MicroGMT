@@ -2,12 +2,16 @@
 A mutation tracker for SARS-CoV-2 and other microbial genome sequences
 
 ## Updates
-**Important update for SARS-CoV-2:** To handle the multiple CDS and the -1 ribosomal frameshift in ORF1ab of SARS-CoV-2, attributes were added to the gene ID and gene name of ORF1ab to denote which CDS the mutation is on in the output vcfs and summary tables.
+### Important update for SARS-CoV-2:
+To handle the multiple CDS and the -1 ribosomal frameshift in ORF1ab of SARS-CoV-2, attributes were added to the gene ID and gene name of ORF1ab to denote which CDS the mutation is on in the output vcfs and summary tables.
 
 There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on which the -1 ribosomal frameshift occurs during translation, produces pp1ab; 2) CDS of (266..13483) produces pp1a.
 
 * For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a.
 * For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
+
+### Version 1.2.1 (June 1 2020) update
+Updated the pre-built summary tables for SARS-CoV-2. It now contains 34786 strains from GISAID as of 05/31/2020. Mature peptide name annotated summary tables, and the tables processed by analysis_utilities.py from them are also provided.
 
 ### Version 1.2 (May 31 2020) update
 * Added 4 utility scripts: get_ids.sh, add_custom_annotation.py, mask_sequences.py and sequence_ID_extractor.py.
@@ -24,7 +28,7 @@ No installation required. Simply download the repository and unpack by "tar".
 
 ## Requirements
 * [Python 3](https://www.python.org/). Required python packages: argparse, os, subprocess, sys, time.
-* [snpEff](http://snpeff.sourceforge.net/)
+* [snpEff 4.3t](http://snpeff.sourceforge.net/)
 * [SAMtools](http://samtools.sourceforge.net/)
 * [JAVA](https://www.java.com/en/)
 
@@ -33,9 +37,9 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;2. [BCFtools](https://samtools.github.io/bcftools/)
 
 * If the inputs are fastq formatted raw reads, you will also need:<br>
-&#160;1. [GATK/3.8-1-0-Java-1.8.0](https://gatk.broadinstitute.org/hc/en-us)
-&#160;2. [picard/2.18.27-Java-1.8](https://broadinstitute.github.io/picard/)
-&#160;3. [BWA/0.7.17-intel-2018b](http://bio-bwa.sourceforge.net/)
+&#160;1. [GATK 3.8](https://gatk.broadinstitute.org/hc/en-us)
+&#160;2. [picard 2.18 or above](https://broadinstitute.github.io/picard/)
+&#160;3. [BWA](http://bio-bwa.sourceforge.net/)
 
 ## Usage
 * The main function of MicroGMT contains two steps: sequence_to_vcf.py (step 1), which aligns the input file(s) to the reference genome and identify variants; and annotate_vcf.py (step 2), which annotates the variants and output summary tables. Note: annotate_vcf.py (step 2) can take in the step 1 outputs from multiple runs, as long as they are in one input folder. So you can first process all samples by step 1, and then run them all together by step 2.
