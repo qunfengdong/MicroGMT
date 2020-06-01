@@ -220,7 +220,7 @@ cat <fastq_prefix_list> | while read line
 do
   python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
-  -i fastq -fq1 ${line}_1.fq -fq2 ${line}_2.fq \
+  -i fastq -fq1 <dir_to_fqfiles>/${line}_1.fq -fq2 <dir_to_fqfiles>/${line}_2.fq \
   -o <out_dir_1> \
   -gatk <path_to_gatk> \
   -picard <path_to_picard> \
@@ -249,7 +249,7 @@ cat <fastq_prefix_list> | while read line
 do
   python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <fasta_reference_sequence_file> \
-  -i fastq -fq1 ${line}_1.fq -fq2 ${line}_2.fq \
+  -i fastq -fq1 <dir_to_fqfiles>/${line}_1.fq -fq2 <dir_to_fqfiles>/${line}_2.fq \
   -o <out_dir_1> \
   -gatk <path_to_gatk> \
   -picard <path_to_picard> \
@@ -614,7 +614,7 @@ cat ids_for_10_strains.list | while read line
 do
   python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
-  -i fastq -fq1 ${line}_1.fq -fq2 ${line}_2.fq \
+  -i fastq -fq1 <dir_to_fqfiles>/${line}_1.fq -fq2 <dir_to_fqfiles>/${line}_2.fq \
   -o <out_dir_1> \
   -gatk <path_to_gatk> \
   -picard <path_to_picard> \
