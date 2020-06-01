@@ -2,7 +2,6 @@
 A mutation tracker for SARS-CoV-2 and other microbial genome sequences
 
 ## Updates
-### Version 1.1 (May 31 2020) update
 **Important update for SARS-CoV-2:** To handle the multiple CDS and the -1 ribosomal frameshift in ORF1ab of SARS-CoV-2, attributes were added to the gene ID and gene name of ORF1ab to denote which CDS the mutation is on in the output vcfs and summary tables.
 
 There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on which the -1 ribosomal frameshift occurs during translation, produces pp1ab; 2) CDS of (266..13483) produces pp1a.
@@ -10,8 +9,15 @@ There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on 
 * For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a.
 * For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
 
+### Version 1.2 (May 31 2020) update
+* Added 4 utility scripts: get_ids.sh, add_custom_annotation.py, mask_sequences.py and sequence_ID_extractor.py.
+* Revised analysis_utilities.py to accommodate the added features of the new utility scripts.
+
+### Version 1.1 (May 31 2020) update
+To handle the multiple CDS and the -1 ribosomal frameshift in ORF1ab of SARS-CoV-2, attributes were added to the gene ID and gene name of ORF1ab to denote which CDS the mutation is on in the output vcfs and summary tables (see "Important update for SARS-CoV-2" above）.
+
 ## Description
-MicroGMT is a python based package, which takes either raw sequence reads or assembled genome sequence as input and compares against database sequences to identify and characterize small indels and point mutations in the microbial genoems. Although our default setting is optimized for SARS-CoV-2 virus, the package can be also applied to any other microbial genomes. <br>
+MicroGMT is a python based package, which takes either raw sequence reads or assembled genome sequence as input and compares against database sequences to identify and characterize small indels and point mutations in the microbial genoems. Although our default setting is optimized for SARS-CoV-2 virus, the package can be also applied to any other microbial genomes.
 
 ## Installation
 No installation required. Simply download the repository and unpack by "tar".
@@ -38,7 +44,11 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
 &#160;3. analysis_utilities.py: reformat the summary table for easy access with [R](https://www.r-project.org/) or other tools, or find unique mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus).<br>
 &#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in existing summary tables.<br>
-&#160;5. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/IDs.
+&#160;5. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/sequences.
+&#160;6. get_ids.sh: extract the strain/sequence IDs from a summary table.
+&#160;7. add_custom_annotation.py: add custom annotations to summary tables according to geomic coordinates of the annotation features.
+&#160;8. mask_sequences.py: mask sequences according to user-supplied geomic coordinates.
+&#160;9. sequence_ID_extractor.py: extract and summarize mutation information for specific strains/sequences.
 
 ## Inputs
 ### The main functions:
@@ -52,7 +62,9 @@ All are optional depending on which script to use. Please see "Quick start" and 
 * Summary tables.
 * Fasta assembly file(s).
 * Region file.
-* Optional: An id list containg the strain/ID in the summary tables. One strain/ID per line. Needed for some utility scripts (please see "Quick start" and "Tutorial" sections). It is produced by sequence_to_vcf.py automatically for fasta formatted database sequence file inputs. Users can modify it by manually adding/deleting IDs from it, or use our utility scripts (see "Quick start" and "Tutorial" sections). For the pre-built summary tables for SARS-CoV-2, it is provided with the summary tables.
+* Custom annotation file.
+* Sequence mask file.
+* An id list containg the strain/ID in the summary tables. One strain/ID per line. Needed for some utility scripts (please see "Quick start" and "Tutorial" sections). It is produced by sequence_to_vcf.py automatically for fasta formatted database sequence file inputs. Users can modify it by manually adding/deleting IDs from it, or use our utility scripts (see "Quick start" and "Tutorial" sections). For the pre-built summary tables for SARS-CoV-2, it is provided with the summary tables. It can also be produced by get_ids.sh.
 
 ## Outputs
 ### sequence_to_vcf.py:
@@ -64,26 +76,26 @@ All are optional depending on which script to use. Please see "Quick start" and 
 * Vcf formatted variant calling files with variants annotated. File names end by "anno.vcf".
 * Tab delimited summary file produced by snpEff. File names end by "snpEff_summary.genes.txt".
 * Csv format snpEff summary file (optional, different than "snpEff_summary.genes.txt" file). File names end by "snpEff_summary.csv".
-* Tab delimited summary tables of all vcf files in the input folder. Columns represent strains/samples/IDs. Rows represent mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each format: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|". Please see the provided sample output summary tables in "test_dataset" folder as examples. **Note: To distinguish from the two CDS produced by ORF1ab, for SARS-CoV-2 output summary tables, if a mutation takes place in the mature peptide region produced by pp1ab only, the gene ID and name will be "GU280_gp01_pp1ab" and "ORF1ab_pp1ab"; if a mutation takes place in the mature peptide region produced by both pp1a an pp1ab, or only by pp1a, the gene ID and name will be "GU280_gp01_pp1a" and "ORF1ab_pp1a".**
+* Tab delimited mutation summary tables of all vcf files in the input folder. Columns represent strains/samples/IDs. Rows represent mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each format: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|". Please see the provided sample output summary tables in "test_dataset" folder as examples. **Note: To distinguish from the two CDS produced by ORF1ab, for SARS-CoV-2 output summary tables, if a mutation takes place in the mature peptide region produced by pp1ab only, the gene ID and name will be "GU280_gp01_pp1ab" and "ORF1ab_pp1ab"; if a mutation takes place in the mature peptide region produced by both pp1a an pp1ab, or only by pp1a, the gene ID and name will be "GU280_gp01_pp1a" and "ORF1ab_pp1a".**
 * Log file.
 
 ### Utility scripts:
-Optional outputs include the following. Please see "Quick start" and "Tutorial" for more details.
+Optional outputs include the following. For more details about the outputs of each utility script, please see "Quick start" and "Tutorial".
 * Summary tables
-* Reformatted summary tables
+* Reformatted summary tables and other useful tables produced based on summary tables
 * Region file and fasta assembly file with selected strains/IDs
 * ID lists to extract strains/IDs from fasta assembly file and region file.
 * Log file.
-* analysis_utilities.py reformatting output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region"). Please see the provided sample outputs in "test_dataset" folder as examples.
-* analysis_utilities.py finding unique mutation output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation"). Please see the provided sample outputs in "test_dataset" folder as examples.
 
 ## The pre-built summary tables for SARS-CoV-2
-The pre-built summary tables contain mutation and region information of 29896 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 20, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Just unzip them and use. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
+The pre-built summary tables contain mutation and region information of 34786 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 31, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Just unzip them and use. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
 
 **Note: To distinguish from the two CDS produced by ORF1ab, for SARS-CoV-2 output summary tables, if a mutation takes place in the mature peptide region produced by pp1ab only, the gene ID and name will be "GU280_gp01_pp1ab" and "ORF1ab_pp1ab"; if a mutation takes place in the mature peptide region produced by both pp1a an pp1ab, or only by pp1a, the gene ID and name will be "GU280_gp01_pp1a" and "ORF1ab_pp1a".**
 
 ## Pre-built annotation database for SARS-CoV-2
-The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by revised NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512 to handle the different CDS and the -1 ribosomal frameshift of ORF1ab. The version number of the genome is 2.
+The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by revised NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512 to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. The version number of the genome is 2. Please see below about how this database was built.
+
+Other useful files for SARS-CoV-2 are stored in <path_to_MicroGMT>/NC_045512_source_files. These files are based on NCBI's fasta sequence and annotation files of NC_045512.
 
 ## Build own annotation databases for user-supplied genomes
 For user-supplied genomes, you can find out if the genome is supported by snpEff:
@@ -147,6 +159,9 @@ Another example is in Tutorial section.
 ## Quick start
 ### Running MicroGMT for fasta formatted database sequences
 #### For SART-CoV-2:
+Input: fasta_assembly_file, region_file
+Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
+
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -162,6 +177,9 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ```
 
 #### For user-supplied genomes:
+Input: fasta_assembly_file, fasta_reference_sequence_file, reference_genome_database, region_file
+Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
+
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -179,6 +197,9 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 
 ### Running MicroGMT for fastq formatted raw read sequences
 #### For SART-CoV-2:
+Input: fastq_raw_reads file(s) (single or paired-end), region_file
+Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
+
 * For step 1, to run one sample, do the following.
 ```bash
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -215,6 +236,9 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ```
 
 #### For user-supplied genomes:
+Input: fastq_raw_reads file(s) (single or paired-end), fasta_reference_sequence_file, reference_genome_database, region_file
+Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
+
 * Step 1
 ```bash
 cat <fastq_prefix_list> | while read line
@@ -252,6 +276,9 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ### Running MicroGMT for fasta formatted contig sequences
 **Warning: This option is not tested. Use at your own risk!**
 #### For SART-CoV-2:
+Input: contig_sequences_file, region_file
+Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
+
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -267,6 +294,9 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ```
 
 #### For user-supplied genomes:
+Input: contig_sequences_file, fasta_reference_sequence_file, reference_genome_database, region_file
+Output: mutation annotated vcf files, mutation summary tables. See "output" section above for details.
+
 ```bash
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
@@ -283,6 +313,11 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 ```
 
 ### Extract strain/IDs from a new fasta database sequence file to make a list and a fasta file for sequences that are not in an existing summary tables
+Input: new_database_sequences_file, id_list_for_existing_summary_tables
+Output: new_id_list_for_sequences_in_the_new_database_sequence_file, file_containg_ids_for_sequences_not_in_existing_summary_tables, fasta_file_for_sequences_not_in_existing_summary_tables
+
+For the last two outputs, please make sure there's no files with the same names exist in the output directory before running the command!
+
 ```bash
 <path_to_MicroGMT>/Find_new_seqs.sh \
 	<new_database_sequences_file> <id_list_for_existing_summary_tables> \
@@ -290,18 +325,22 @@ python <path_to_MicroGMT>/annotate_vcf.py \
 	<name_of_file_containg_ids_for_sequences_not_in_existing_summary_tables> \
 	<name_of_fasta_file_for_sequences_not_in_existing_summary_tables>
 ```
-For the last two outputs, please make sure there's no files with the same names exist in the output directory before running the command!
 
 ### Extract regions for above strain/IDs from a big region file
+Input: file_containg_ids_for_sequences_not_in_existing_summary_tables, input_region_information_file
+Output: region_information_file_containg_ids_for_sequences_not_in_existing_summary_tables
+
+For the output, please make sure there's no file with the same name exist in the output directory before running the command!
+
 ```bash
 <path_to_MicroGMT>/Find_regiosn_for_new_seqs.sh \
 	<file_containg_ids_for_sequences_not_in_existing_summary_tables> <input_region_information_file> \
 	<name_of_region_information_file_containg_ids_for_sequences_not_in_existing_summary_tables>
 ```
-For the output, please make sure there's no file with the same name exist in the output directory before running the command!
 
-### Remove strains/IDs from summary tables
-**Note:** Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!
+### Remove strains/sequences from summary tables
+Input: summary table (**Only \<prefix>.all.form1.txt or \<prefix>.all.form2.txt is required**), list of strain/sequence ids to be removed
+Output: **All** kinds of summary tables of form1 or form 2 (depending on your input table form), with strains/sequences removed
 
 Remove strains from format 1 summary tables:
 ```bash
@@ -317,7 +356,8 @@ python <path_to_MicroGMT>/remove_from_summary_tables.py \
 ```
 
 ### Combine summary tables
-**Note:** Only <prefix>.all.form1.txt or <prefix>.all.form2.txt is required!
+Input: summary tables (**Only \<prefix>.all.form1.txt or \<prefix>.all.form2.txt is required. The input summary tables need to be in a same form**)
+Output: **All** kinds of combined summary tables of form1 or form 2 (depending on your input table form)
 
 Combine format 1 summary tables:
 ```bash
@@ -333,22 +373,85 @@ python <path_to_MicroGMT>/combine_summary_tables.py \
   -i1 <prefix_for_input_table_1>.all.form2.txt \
   -i2 <prefix_for_input_table_2>.all.form2.txt
 ```
+### Extract strain/sequence IDs from summary tables
+Input: a form2 summary table
+Output: a strain/sequence id list for that summary table (it's also the strain/sequence id list for the form1 summary table of the same dataset)
 
-### Downstream utilities
-**Note:** Input one summary table at a time.
+```bash
+<path_to_MicroGMT>/get_ids.sh \
+	<form2_summary_table> <name_of_id_list>
+```
+For the output, please make sure there's no file with the same name exist in the output directory before running the command!
 
-Reformat summary tables:
+### Mask regions on the genome for summary tables
+Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**), mask file (tab-delimited, "chr  mask_start  mask_end" one per line)
+Output: **All** kinds of masked form2 summary tables.
+
 ```bash
-python <path_to_MicroGMT>/analysis_utilities.py \
-  -i <input_summary_table> \
-  -o <output_table> -t <table_format>
+python <path_to_MicroGMT>/mask_sequences.py \
+  -i <prefix>.all.form2.txt -d <out_dir> -m <input_mask_file>
 ```
-Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+
+### Add custom annotations
+#### For SARS-CoV-2:
+Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**)
+Output: **All** kinds of form2 summary tables with custom annotations added as a column.
+
 ```bash
-python <path_to_MicroGMT>/analysis_utilities.py \
-  -i <input_summary_table> \
-  -o <output_table> -t <table_format>
+python <path_to_MicroGMT>/add_custom_annotation.py \
+  -i <prefix>.all.form2.txt -d <out_dir> \
+  -a <path_to_MicroGMT>/NC_045512_source_files/NC_045512_cus_anno.txt
 ```
+You may also use your own custom annotation file.
+
+#### For user-supplied genomes:
+Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**), custom annotation file (tab-delimited, "chr  feature_start  feature_end  feature_name" one per line)
+Output: **All** kinds of form2 summary tables with custom annotations added as a column.
+
+```bash
+python <path_to_MicroGMT>/add_custom_annotation.py \
+  -i <prefix>.all.form2.txt -d <out_dir> -a <custom_annotation_file>
+```
+
+### Downstream utilities: analysis_utilities.py
+#### Reformat summary tables:
+* Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
+* Output: tab delimited file with one mutation per line ("chr pos gene_id gene_name mutation strain_ID region" for form2 summary table, and "chr pos gene_id gene_name custom_annotation mutation strain_ID region" for custom annotated form2 summary table). Please see the provided sample outputs in "test_dataset" folder as examples.
+
+```bash
+# form2 summary table as input
+python <path_to_MicroGMT>/analysis_utilities.py \
+-i <form2_summary_table> -o <name_of_output_table> \
+-t a -a n
+
+# custom annotated form2 summary table as input
+python <path_to_MicroGMT>/analysis_utilities.py \
+-i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
+-t a -a y
+```
+
+#### Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+* Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
+* Output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation" for form2 summary table, and "strain_ID region chr pos gene_id gene_name custom_annotation mutation" for custom annotated form2 summary table). Please see the provided sample outputs in "test_dataset" folder as examples.
+
+```bash
+# form2 summary table as input
+python <path_to_MicroGMT>/analysis_utilities.py \
+-i <form2_summary_table> -o <name_of_output_table> \
+-t b -a n
+
+# custom annotated form2 summary table as input
+python <path_to_MicroGMT>/analysis_utilities.py \
+-i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
+-t b -a y
+```
+
+### 
+
+
+
+
+
 
 ## Tutorial
 ### 1. Workflow for SARS-CoV-2 sequences
