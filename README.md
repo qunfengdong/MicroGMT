@@ -612,9 +612,9 @@ Alternatively, you may just use get_ids.sh:
 ```
 
 #### Fastq raw reads files as input
-Here we produce summary tables for the simulated fastq raw reads files from 10 strains. The prefix for the fastq files are in the file "ids_for_10_strains.list". The IDs in the summary tables are the prefix for the fastq files in this example.
+Here we produce summary tables for the simulated fastq raw reads files from 5 strains. The prefix for the fastq files are in the file "ids_for_5_strains.list". The IDs in the summary tables are the prefix for the fastq files in this example.
 ```bash
-cat ids_for_10_strains.list | while read line
+cat ids_for_5_strains.list | while read line
 do
   python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
@@ -664,7 +664,7 @@ python <path_to_MicroGMT>/sequence_ID_extractor.py \
 ```
 
 #### Test dataset
-If you want to try on a small test dataset first, please use the provided test datasets. Simply unzip it to use. It contains database sequences and simulated raw read sequnces of 10 randomly selected strains from GISAID database. For database sequences, start from "Make summary tables". Also the formatting steps in "Input" section is already done. 
+If you want to try on a small test dataset first, please use the provided test datasets. Simply unzip it to use. It contains database sequences and simulated raw read sequnces of 5 randomly selected strains from GISAID database. For database sequences, start from "Make summary tables". Also the formatting steps in "Input" section is already done. 
 
 ### 2. Workflow for sequences of E.coli K12 strains
 #### Build the annotation database
