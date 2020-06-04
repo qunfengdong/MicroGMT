@@ -627,7 +627,7 @@ done
 	
 python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir_1> -c -o <out_dir_2> \
-  -rg 10_strains_region_file.tsv -f both \
+  -rg 5_strains_region_file.tsv -f both \
   -eff <path_to_snpEff>
 ```
 
