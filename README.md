@@ -29,8 +29,8 @@ No installation required. Simply download the repository and unpack by "tar".
 ## Requirements
 * [Python 3](https://www.python.org/). Required python packages: argparse, os, subprocess, sys, time.
 * [snpEff 4.3t](http://snpeff.sourceforge.net/)
-* [SAMtools](http://samtools.sourceforge.net/)
-* [JAVA](https://www.java.com/en/)
+* [SAMtools 1.6 or above](http://samtools.sourceforge.net/)
+* [JAVA 1.8 or above](https://www.java.com/en/)
 
 * If the inputs are fasta formatted assembled genomes/contigs, you will also need:<br>
 &#160;1. [minimap2](https://github.com/lh3/minimap2)<br>
