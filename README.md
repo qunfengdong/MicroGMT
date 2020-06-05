@@ -32,7 +32,7 @@ No installation required. Simply download the repository and unpack by "tar".
 * [SAMtools 1.6 or above](http://samtools.sourceforge.net/)
 * [JAVA 1.8 or above](https://www.java.com/en/)
 
-* If the inputs are fasta formatted assembled genomes/contigs, you will also need:<br>
+* If the inputs are fasta genome assembly sequences/contigs, you will also need:<br>
 &#160;1. [minimap2](https://github.com/lh3/minimap2)<br>
 &#160;2. [BCFtools](https://samtools.github.io/bcftools/)
 
