@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# MicroGMT Version 1.3  (June 2020)
 
 import time
 import os
@@ -76,7 +77,7 @@ def fastaq_to_vcf(out_log,out_dir,in_ref, \
 	subprocess.call(['./Prepare_fastq.sh',ref_genome,\
 		in_fq1,in_fq2,in_fid,prior,mbq,BAQ,\
 		path_to_gatk,out_dir,out_log, \
-		in_fastq,in_pairing,in_th])
+		in_fastq,in_pairing,in_th,os.path.dirname(os.path.realpath(__file__))])
 	os.chdir(dirn)
 	if keep_bam=="F":
 		subprocess.call(['rm', '-f',os.path.join(out_dir,in_fid+'.bam')])
@@ -821,3 +822,44 @@ def mutation_summary_wanno(out_log,fl,fid,out,fm):
 	f.close()
 	o.close()
 
+def calculate_frequencies(fun_out_dir,fun_out_pref,fun_type):
+	in_table=os.path.join(fun_out_dir,fun_out_pref+"."+fun_type+".form2.txt")
+	out_s=os.path.join(fun_out_dir,fun_out_pref+"."+fun_type+".sequence.frequencies.txt")
+	out_p=os.path.join(fun_out_dir,fun_out_pref+"."+fun_type+".pos.frequencies.txt")
+	fr=None
+	fr2=None
+	df = pd.read_csv(in_table, sep = '\t', \
+	comment = '#', low_memory = False, header = 0)
+	hd=list(df.columns)
+	for i in hd[4:]:
+		if fr is None:
+			fr=df[i].value_counts().rename_axis('Mutation').reset_index(name='Count')
+			fr.insert(0, "ID", i, True)
+			fr.to_csv(out_s, index=False)
+		else:
+			nd=df[i].value_counts().rename_axis('Mutation').reset_index(name='Counts')
+			nd.insert(0, "ID", i, True) 
+			nd.to_csv(out_s, mode='a', header=False, index=False)
+	for j in range(df.shape[0]):
+		if fr2 is None:
+			fr2=df.iloc[j][4:].value_counts().rename_axis('Mutation').reset_index(name='Counts')
+			fr2.insert(0,"Chr",df.iloc[j][0],True)
+			fr2.insert(1,"Pos",df.iloc[j][1],True)
+			fr2.insert(2,"Gid",df.iloc[j][2],True)
+			fr2.insert(3,"Gname",df.iloc[j][3],True)
+			fr2.to_csv(out_p, index=False)
+		else:
+			nd=df.iloc[j][4:].value_counts().rename_axis('Mutation').reset_index(name='Counts')
+			nd.insert(0,"Chr",df.iloc[j][0],True)
+			nd.insert(1,"Pos",df.iloc[j][1],True)
+			nd.insert(2,"Gid",df.iloc[j][2],True)
+			nd.insert(3,"Gname",df.iloc[j][3],True)
+			nd.to_csv(out_p, mode='a', header=False, index=False)
+
+def summary_table_calculate_frequencies(out_dir,out_pref):
+	calculate_frequencies(out_dir,out_pref,"cds_change")
+	calculate_frequencies(out_dir,out_pref,"prot_change")
+	calculate_frequencies(out_dir,out_pref,"mut_type")
+	calculate_frequencies(out_dir,out_pref,"effect")
+	calculate_frequencies(out_dir,out_pref,"all")
+	calculate_frequencies(out_dir,out_pref,"gene_mut")

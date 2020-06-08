@@ -1,4 +1,5 @@
 #!/bin/bash
+# MicroGMT Version 1.3  (June 2020)
 
 file1=$1
 file2=$2

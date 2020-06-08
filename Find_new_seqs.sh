@@ -1,4 +1,5 @@
 #!/bin/bash
+# MicroGMT Version 1.3  (June 2020)
 
 fl=$1
 id_list=$2

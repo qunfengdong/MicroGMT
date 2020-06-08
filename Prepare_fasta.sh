@@ -1,4 +1,5 @@
 #!/bin/bash
+# MicroGMT Version 1.3  (June 2020)
 
 ref=$1
 seqs_file=$2
@@ -39,8 +40,8 @@ do
 		fi
 
 	else
-		echo  "Error: Processing fasta assembly inputs not successful!"
-		echo  "Error: Processing fasta assembly inputs not successful!" >> $log
+		echo  "Error: Processing fasta assembly inputs not successful."
+		echo  "Error: Processing fasta assembly inputs not successful." >> $log
 		exit 1
 	fi
 done

@@ -1,4 +1,5 @@
 #!/bin/bash
+# MicroGMT Version 1.3  (June 2020)
 
 ref=$1
 fq1=$2
@@ -13,17 +14,22 @@ log=${10}
 fastq=${11}
 pairing=${12}
 th=${13}
+mdir=${14}
 
 cd $out_dir
+
+a=$(cat ${mdir}/Prepare_fastq_config.txt)
 
 if [[ $pairing == "paired" ]]
 then
 bwa mem -t ${th} -R "@RG\tID:${fid}\tSM:${fid}" \
+${a} \
 ${ref} ${fq1} ${fq2} | \
 samtools view -@ ${th} -Su -q 1 - | \
 samtools sort -@ ${th} - | samtools rmdup - ${fid}.bam
 else
 bwa mem -t ${th} -R "@RG\tID:${fid}\tSM:${fid}" \
+${a} \
 ${ref} ${fastq} | \
 samtools view -@ ${th} -Su -q 1 - | \
 samtools sort -@ ${th} - | samtools rmdup - ${fid}.bam
@@ -59,9 +65,9 @@ then
 	rm -f ${fid}_IndelRealigner.intervals
 	mv ${fid}.f.bam ${fid}.bam
 	mv ${fid}.f.bai ${fid}.bam.bai
-	echo "Processing fastq inputs successful!" >> $log
+	echo "Processing fastq inputs successful." >> $log
 else
-	echo "Error: Processing fastq inputs not successful!"
-	echo "Error: Processing fastq inputs not successful!" >> $log
+	echo "Error: Processing fastq inputs not successful."
+	echo "Error: Processing fastq inputs not successful." >> $log
 	exit 1
 fi

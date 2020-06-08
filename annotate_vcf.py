@@ -36,12 +36,15 @@ def main():
 	group2.add_argument('-rg', type=str, dest='region_file', \
 		default=None, \
 		help='Name of the region file (Optional)')
-	group2.add_argument('-na', dest='skip_anno', \
+	group2.add_argument('-sa', dest='skip_anno', \
 		action='store_true', \
-		help='Skip vcf annotation step, just make summary tables from annotated vcfs.')
+		help='Skip vcf annotation step, just make summary tables from annotated vcf files in the input directory. The input vcf files must be MicroGMT/snpEff annotated.')
 	group2.add_argument('-eff', type=str, dest='path_to_snpEff', \
 		default=None, \
 		help='Absolute path to snpEff.jar. Required if annotae vcf files.')
+	group2.add_argument('-cf', dest='calc_freq', \
+		action='store_true', \
+		help='Calculate frequency summaries for the summary tables.')
 
 	args = parser.parse_args()
 
@@ -59,6 +62,7 @@ def main():
 	param['out_log']=os.path.join(param['out_dir'],param['log_nm'])
 	param['table_prefix'] = args.table_prefix
 	param['table_form'] = args.table_form
+	param['calc_freq'] = args.calc_freq
 	
 	if args.region_file:
 		param['reg_file']=os.path.join(os.getcwd(),args.region_file)
@@ -74,10 +78,10 @@ def main():
 
 	log_print(param['out_log'],'==================== MicroGMT ====================')
 	log_print(param['out_log'],'                  Annotate_vcf')
-	log_print(param['out_log'],'             Version 1.2  (May 2020)')
+	log_print(param['out_log'],'             Version 1.3  (June 2020)')
 	log_print(param['out_log'],'   Bug report: Yue Xing <yue.july.xing@gmail.com>')
 	log_print(param['out_log'],'======================================================')
-
+	
 	if not param['skip_anno']:
 		if not param['path_to_snpEff']:
 			scn_print("Error: Path to snpEff not provided!")
@@ -114,6 +118,12 @@ def main():
 			make_out_table_form2(param['out_log'],param['in_dir'], \
 				param['out_dir'],param['table_prefix'],param['reg_file'])
 	log_print(param['out_log'],"Finished making summary tables!")
+
+	if param['calc_freq']:
+		import pandas as pd
+		log_print(param['out_log'],"Start calculating mutation frequencies from summary tables.")
+		summary_table_calculate_frequencies(param['out_dir'],param['table_prefix'])
+		log_print(param['out_log'],"Finished calculating mutation frequencies from summary tables!")
 
 if __name__ == '__main__':
 	main()
