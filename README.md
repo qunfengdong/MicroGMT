@@ -772,6 +772,11 @@ python <path_to_MicroGMT>/mask_sequences.py \
 * If your fasta assembly file is named by the the sequence ID or one of the sequence IDs in the fasta header, pleas do not direct your output into the same folder as the fasta assembly file. Otherwise your fasta assembly file will be deleted!
 * MicroGMT is designed for tracking indels and SNPs among closely related strains instead of detecting large-scale complex genomic rearrangements and duplications. In addition, if you supply fastq raw reads file as input, the accuracy of mutation detection can be slightly affected by unmasked repetitive regions in the reference genome due to the difficult nature of aligning short sequence reads to the reference genome. You may mask repeat regions by mask_sequences.py.
 
+## Run time
+The total time used for the core steps for one SARS-CoV-2 sample is:
+* 4s for one sequence in the fasta assembly file
+* 14s for one fastq raw reads input with 50x depth of coverage
+
 ## Arguments
 ### Check_environment.sh
 ```bash
