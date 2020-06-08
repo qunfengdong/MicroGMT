@@ -823,6 +823,7 @@ def mutation_summary_wanno(out_log,fl,fid,out,fm):
 	o.close()
 
 def calculate_frequencies(fun_out_dir,fun_out_pref,fun_type):
+	import pandas as pd
 	in_table=os.path.join(fun_out_dir,fun_out_pref+"."+fun_type+".form2.txt")
 	out_s=os.path.join(fun_out_dir,fun_out_pref+"."+fun_type+".sequence.frequencies.txt")
 	out_p=os.path.join(fun_out_dir,fun_out_pref+"."+fun_type+".pos.frequencies.txt")
@@ -857,6 +858,7 @@ def calculate_frequencies(fun_out_dir,fun_out_pref,fun_type):
 			nd.to_csv(out_p, mode='a', header=False, index=False)
 
 def summary_table_calculate_frequencies(out_dir,out_pref):
+	import pandas as pd
 	calculate_frequencies(out_dir,out_pref,"cds_change")
 	calculate_frequencies(out_dir,out_pref,"prot_change")
 	calculate_frequencies(out_dir,out_pref,"mut_type")
