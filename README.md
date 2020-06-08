@@ -32,7 +32,7 @@ MicroGMT is a python based package, which takes either raw sequence reads or ass
 No installation required. Simply download the repository and unpack by "tar".
 
 ## Requirements
-* [Python 3](https://www.python.org/). Required python packages: argparse, os, subprocess, sys, time, pandas.
+* [Python 3](https://www.python.org/). Required python modules: argparse, os, subprocess, sys, time. Python module pandas is also required if users want to further output mutation frequency tables from summary tables.
 * [snpEff 4.3t](http://snpeff.sourceforge.net/)
 * [SAMtools 1.6 or above](http://samtools.sourceforge.net/)
 * [JAVA 1.8 or above](https://www.java.com/en/)
@@ -49,50 +49,54 @@ No installation required. Simply download the repository and unpack by "tar".
 ## Usage
 * The main function of MicroGMT contains two steps: sequence_to_vcf.py (step 1), which aligns the input file(s) to the reference genome and identify variants; and annotate_vcf.py (step 2), which annotates the variants and output summary tables. Note: annotate_vcf.py (step 2) can take in the step 1 outputs from multiple runs, as long as they are in one input folder. So you can first process all samples by step 1, and then run them all together by step 2.
 * MicroGMT also provide additional utility scripts:<br>
-&#160;1. combine_summary_tables.py: combine summary tables from different MicroGMT runs.<br>
-&#160;2. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
-&#160;3. analysis_utilities.py: reformat the summary table for easy access with [R](https://www.r-project.org/) or other tools, or find unique mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus).<br>
-&#160;4. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in existing summary tables.<br>
-&#160;5. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/sequences.
-&#160;6. get_ids.sh: extract the strain/sequence IDs from a summary table.
-&#160;7. add_custom_annotation.py: add custom annotations to summary tables according to geomic coordinates of the annotation features.
-&#160;8. mask_sequences.py: mask sequences according to user-supplied geomic coordinates.
-&#160;9. sequence_ID_extractor.py: extract and summarize mutation information for specific strains/sequences.
+&#160;1. Check_environment.sh: check running environment<br>
+&#160;2. combine_summary_tables.py: combine summary tables from different MicroGMT runs.<br>
+&#160;3. remove_from_summary_tables.py: remove unwanted strains/IDs from the summary table.<br>
+&#160;4. analysis_utilities.py: reformat the summary table for easy access with [R](https://www.r-project.org/) or other tools, or find unique mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus).<br>
+&#160;5. Find_new_seqs.sh: find new strains/IDs from a fasta formatted file of assembled sequences that are not already in existing summary tables.<br>
+&#160;6. Find_regiosn_for_new_seqs.sh: extract region information from a region file for a list of strains/sequences.
+&#160;7. get_ids.sh: extract the strain/sequence IDs from a summary table.
+&#160;8. add_custom_annotation.py: add custom annotations to summary tables according to geomic coordinates of the annotation features.
+&#160;9. mask_sequences.py: mask sequences according to user-supplied geomic coordinates.
+&#160;10. sequence_ID_extractor.py: extract and summarize mutation information for specific strains/sequences.
 
 ## Inputs
 ### The main functions:
 * The fasta genome reference file. For SARS-CoV-2, its fasta genome reference file is located at <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. The accession number ".2" is deleted from the fasta header.
 * The annotation database. For SARS-CoV-2, its annotation database is pre-built and is the default database. For user-supplied genomes, please see "Pre-built annotation database for SARS-CoV-2 and build own annotation databases for user-supplied genomes" for building own databases.
 * A fasta formatted database sequence file, which can contain one or multiple fasta genome assembly sequences from multiple samples (i.e. fasta genome assembly sequences downloaded from NCBI; fasta genome assembly sequences of SARS-CoV-2 downloaded from [GISAID](https://www.gisaid.org/) which contains fasta genome assembly sequences from > 20000 strains in one file. Called "fasta assembly file" below). Or a fastq formatted single/paired end raw sequence file  (called "fastq raw reads file" below). Or a fasta formatted contig sequence file from one sample (i.e. a collection of short fasta sequences from one sample, called "fasta contig file" below. **Caution: the contig sequence file option is not tested. Use at your own risk**).
-* Optional: A tab delimited region file contain region information of the samples. Format: "strain/ID	region(without blanks)"
+* Optional: A tab delimited regional file contain region information of the samples. Format: "strain/ID	region(without blanks)"
+
+**Note: Please don't use duplicate fasta headers and sample ID prefixes for different strains/samples. MicroGMT is not checking duplicate IDs.**
 
 ### The utility scripts:
 All are optional depending on which script to use. Please see "Quick start" and "Tutorial" for more details.
 * Summary tables.
 * Fasta assembly file(s).
-* Region file.
+* Regional file.
 * Custom annotation file.
 * Sequence mask file.
-* An id list containg the strain/ID in the summary tables. One strain/ID per line. Needed for some utility scripts (please see "Quick start" and "Tutorial" sections). It is produced by sequence_to_vcf.py automatically for fasta formatted database sequence file inputs. Users can modify it by manually adding/deleting IDs from it, or use our utility scripts (see "Quick start" and "Tutorial" sections). For the pre-built summary tables for SARS-CoV-2, it is provided with the summary tables. It can also be produced by get_ids.sh.
+* An id list containg the strain/sequence in the summary tables. One strain/sequence per line. Needed for some utility scripts (please see "Quick start" and "Tutorial" sections). It is produced by sequence_to_vcf.py automatically for fasta formatted database sequence file inputs. Users can modify it by manually adding/deleting IDs from it, or use our utility scripts (see "Quick start" and "Tutorial" sections). For the pre-built summary tables for SARS-CoV-2, it is provided with the summary tables. It can also be produced by get_ids.sh.
 
 ## Outputs
 ### sequence_to_vcf.py:
-* An id list containg the strain/ID processed. One strain/ID per line.
-* Vcf format variant calling files. One for each strain/ID.
+* An id list containg the strain/ID processed. One strain/sequence per line.
+* Vcf format variant calling files. One for each strain/sequence. For fasta assembly file, the strain/sequence IDs are the fasta headers (before space, if any). For fastq raw reads file, the strain/sequence ID is the prefix provided when running MicroGMT.
 * Log file. For raw read sequence input, the log file contains the alignment quality information.
 
 ### annotate_vcf.py:
-* Vcf formatted variant calling files with variants annotated. File names end by "anno.vcf".
-* Tab delimited summary file produced by snpEff. File names end by "snpEff_summary.genes.txt".
+* Vcf formatted variant calling files with variants annotated. File names end by "anno.vcf". Can be skipped. You may produce annotated vcfs from multiple runs, put them in a same folder, then run this step with "-sa" to skip annotate vcfs, and make summary tables for all the input annotated vcfs from multiple runs.
+* Tab delimited summary file produced by snpEff. File names end by "snpEff_summary.genes.txt". Need to provide file prefix by "-p".
 * Csv format snpEff summary file (optional, different than "snpEff_summary.genes.txt" file). File names end by "snpEff_summary.csv".
 * Tab delimited mutation summary tables of all vcf files in the input folder. Columns represent strains/samples/IDs. Rows represent mutation loci. The summary tables have two formats: Format 1, one locus per line, each cell has the gene ID, gene name with mutation information for that locus; format 2, one locus per line with the mutated gene ID and name, each cell has the mutation information. Different summary files are provided for each format: all information ("all"), the gene ID and name the mutation locates ("gene", only for format 1), effect of the mutation ("effect"), the mutation on DNA sequence level ("gene_mut"), the gene ID and name the mutation locates along with the DNA level mutation ("gene_name_mut"only for format 1), mutation type ("mut_type"), CDS change ("cds_change"), and amino acid change ("prot_change"). In the cells, if the strain/ID has no mutation at a specific loci, that cell is labelled by "R". If the region files is provided as input, the column headers will have both strain/ID and region information, separated by "|". Please see the provided sample output summary tables in "test_dataset" folder as examples. **Note: To distinguish from the two CDS produced by ORF1ab, for SARS-CoV-2 output summary tables, if a mutation takes place in the mature peptide region produced by pp1ab only, the gene ID and name will be "GU280_gp01_pp1ab" and "ORF1ab_pp1ab"; if a mutation takes place in the mature peptide region produced by both pp1a an pp1ab, or only by pp1a, the gene ID and name will be "GU280_gp01_pp1a" and "ORF1ab_pp1a".**
+* Frequency summary tables for loci and strains/samples, which summarizes the output summary tables. Can be skipped.
 * Log file.
 
 ### Utility scripts:
 Optional outputs include the following. For more details about the outputs of each utility script, please see "Quick start" and "Tutorial". For sample outputs please look at "test_dataset" folder.
 * Summary tables
 * Reformatted summary tables and other useful tables produced based on summary tables
-* Region file and fasta assembly file with selected strains/IDs
+* Regional file and fasta assembly file with selected strains/IDs
 * ID lists to extract strains/IDs from fasta assembly file and region file.
 * Log file.
 
@@ -101,7 +105,7 @@ The pre-built summary tables contain mutation and region information of 34786 SA
 
 **Note: To distinguish from the two CDS produced by ORF1ab, for SARS-CoV-2 output summary tables, if a mutation takes place in the mature peptide region produced by pp1ab only, the gene ID and name will be "GU280_gp01_pp1ab" and "ORF1ab_pp1ab"; if a mutation takes place in the mature peptide region produced by both pp1a an pp1ab, or only by pp1a, the gene ID and name will be "GU280_gp01_pp1a" and "ORF1ab_pp1a".**
 
-## Pre-built annotation database for SARS-CoV-2
+## The pre-built annotation database for SARS-CoV-2
 The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by revised NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512 to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. The version number of the genome is 2. Please see below about how this database was built.
 
 Other useful files for SARS-CoV-2 are stored in <path_to_MicroGMT>/NC_045512_source_files. These files are based on NCBI's fasta sequence and annotation files of NC_045512.
@@ -166,6 +170,13 @@ You will also need the fasta format reference genome sequence file for running M
 Another example is in Tutorial section.
 
 ## Quick start
+### Check environment
+```bash
+<path_to_MicroGMT>/Check_environment.sh \
+	<path_to_snpEff> <path_to_GATK3.8> <path_to_PICARD>
+```
+Output will be print to the screen to let you know if any tool is not properly installed, or if the tool version is not correct.
+
 ### Running MicroGMT for fasta formatted database sequences
 #### For SART-CoV-2:
 Input: fasta_assembly_file, region_file
@@ -182,9 +193,12 @@ python <path_to_MicroGMT>/sequence_to_vcf.py \
 # Step 2
 python <path_to_MicroGMT>/annotate_vcf.py \
   -i <out_dir_1> -c -o <out_dir_2> \
-  -rg <region_file> -f both \
+  -rg <region_file> -f both -cf \
   -eff <path_to_snpEff>
 ```
+You may add "-sa" in step 2 to skip annotate vcf files, but only output summary tables and/or mutation frequency summaries. Then the input direcotry must contain mutation annotated vcf files by MicroGMT/snpEff. Same for user-supplied genomes and raw reads inputs.
+
+You may remove "-cf" to not further output mutation frequency summaries from summary tables. That will increase speed. Same for user-supplied genomes and raw reads inputs.
 
 #### For user-supplied genomes:
 Input: fasta_assembly_file, fasta_reference_sequence_file, reference_genome_database, region_file
@@ -236,7 +250,11 @@ do
   -l ${line}.log -n ${line} -ki
 done
 ```
-&#160;Note: you can also change "-fq1" and "-fq2" to "-fq" to run single end fastq_raw_reads samples.
+&#160;You can also change "-fq1" and "-fq2" to "-fq" to run single end fastq_raw_reads samples.
+
+&#160;A mapping quality summary will be produced in the log file.
+
+&#160;You can filter low quality bases by adding "-m" option. You can fine tune the BWA alignment by revising the "Prepare_fastq_config.txt" file in MicroGMT. It contains parameter settings for BWA. Currently these settings are default. Just change it if you need, and save it.
 
 * Step 2 takes in all the vcf files in a folder produced by step 1 at one time. So you can first process all the samples by step 1, and then process them all together by step 2:
 ```bash
@@ -424,10 +442,10 @@ python <path_to_MicroGMT>/add_custom_annotation.py \
   -i <prefix>.all.form2.txt -d <out_dir> \
   -a <path_to_MicroGMT>/NC_045512_source_files/NC_045512_cus_anno.txt
 ```
-You may also use your own custom annotation file.
+You may also use your own custom annotation file (tab-delimited, "chr  feature_start  feature_end  feature_name" one per line). The annotation file supports multiple annotation lines for one region. Different annotations will be combined by "|" in the output. 
 
 #### For user-supplied genomes:
-Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**), custom annotation file (tab-delimited, "chr  feature_start  feature_end  feature_name" one per line)
+Input: form2 summary table (**Only \<prefix>.all.form2.txt is required**), custom annotation file (tab-delimited, "chr  feature_start  feature_end  feature_name" one per line) The annotation file supports multiple annotation lines for one region. Different annotations will be combined by "|" in the output. 
 
 Output: **All** kinds of form2 summary tables with custom annotations added as a column.
 
@@ -752,9 +770,14 @@ python <path_to_MicroGMT>/mask_sequences.py \
 * The coding of indels in DNA sequence and CDS sequence are slightly different for the same mutations identified by fasta formatted inputs and fastq formatted inputs. But the mutation type, effect, position on DNA and the mutation of amino acids are annotated the same. So, if you want to find unqiue indels across both fasta and fastq formatted inputs, it is suggested to transform them to a same format first.
 * For the summary tables of amino acid changes, if there's a mutation but no amino acid change, it is written as blank ("") in the summary table. When reformat by analysis_utilities.py, it is not included in the output table.
 * If your fasta assembly file is named by the the sequence ID or one of the sequence IDs in the fasta header, pleas do not direct your output into the same folder as the fasta assembly file. Otherwise your fasta assembly file will be deleted!
-* MicroGMT is designed for tracking indels and SNPs among closely related strains instead of detecting large-scale complex genomic rearrangements and duplications. In addition, if you supply fastq raw reads file as input, the accuracy of mutation detection can be slightly affected by unmasked repetitive regions in the reference genome due to the difficult nature of aligning short sequence reads to the reference genome. 
+* MicroGMT is designed for tracking indels and SNPs among closely related strains instead of detecting large-scale complex genomic rearrangements and duplications. In addition, if you supply fastq raw reads file as input, the accuracy of mutation detection can be slightly affected by unmasked repetitive regions in the reference genome due to the difficult nature of aligning short sequence reads to the reference genome. You may mask repeat regions by mask_sequences.py.
 
 ## Arguments
+### Check_environment.sh
+```bash
+<path_to_MicroGMT>/Check_environment.sh \
+	<path_to_snpEff> <path_to_GATK3.8> <path_to_PICARD>
+```
 ### sequence_to_vcf.py
 ``` bash
 usage: sequence_to_vcf.py [-h] -r REF_GENOME -i {assembly,contig,fastq} -o
@@ -762,6 +785,8 @@ usage: sequence_to_vcf.py [-h] -r REF_GENOME -i {assembly,contig,fastq} -o
                           [-fq FASTQ] [-l LOG] [-n NAME] [-gatk PATH_TO_GATK]
                           [-picard PATH_TO_PICARD] [-kb] [-ki] [-p PRIOR]
                           [-m MBQ] [-a {asm5,asm10,asm20}] [-t THREAD]
+
+Sequence file(s) to vcf file(s)
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -780,18 +805,16 @@ Additional arguments for inputs:
 
 Optional arguments:
   -l LOG                Name of the log file [Sequence_to_vcf.log]
-  -n NAME               Name of the input sample. Does not work with 'assembly' option. [test]
-  -gatk PATH_TO_GATK    Absolute path to GenomeAnalysisTK.jar. Only required for 'fastq' option.
+  -n NAME               Name of the input sample. Does not work with 'assembly'                                                                              option. [test]
+  -gatk PATH_TO_GATK    Absolute path to GenomeAnalysisTK.jar. Only required for                                                                              'fastq' option.
   -picard PATH_TO_PICARD
-                        Absolute path to picard.jar. Only required for 'fastq' option.
+                        Absolute path to picard.jar. Only required for 'fastq' o                                                                             ption.
   -kb                   Keep BAM files.
   -ki                   Keep index files. Only works with 'fastq' option.
-  -p PRIOR              Prior for bcftools variant caller (expected substitution rate). 0 means the prior is disabled. 
-                        Only works for 'assembly' or 'contig' option. [0]'.
-  -m MBQ                Minimum base quality for variant caller. Only works with 'fastq' option. [10]
+  -p PRIOR              Prior for bcftools variant caller (expected substitution                                                                              rate). 0 means the prior is disabled. Only works for 'assembly' or 'contig' opt                                                                             ion. [0]'.
+  -m MBQ                Minimum base quality for variant caller. Only works with                                                                              'fastq' option. [10]
   -a {asm5,asm10,asm20}
-                        Sequence divergence: asm5/asm10/asm20 for ~0.1/1/5 percentages. 
-                        Only works with 'assembly' option. [asm5]
+                        Sequence divergence: asm5/asm10/asm20 for ~0.1/1/5 perce                                                                             ntages. Only works with 'assembly' option. [asm5]
   -t THREAD             Number of threads. [10]
 ```
 
@@ -799,7 +822,9 @@ Optional arguments:
 ``` bash
 usage: annotate_vcf.py [-h] -i IN_DIR -o OUT_DIR [-r REFERENCE]
                        [-p TABLE_PREFIX] [-c] [-l LOG] [-f {a,b,both}]
-                       [-rg REGION_FILE] [-na] [-eff PATH_TO_SNPEFF]
+                       [-rg REGION_FILE] [-sa] [-eff PATH_TO_SNPEFF] [-cf]
+
+Vcf file annotation
 
 optional arguments:
   -h, --help           show this help message and exit
@@ -810,14 +835,14 @@ Mandatory inputs:
 
 Optional arguments:
   -r REFERENCE         Name of reference. [NC_045512]
-  -p TABLE_PREFIX      Prefix of summary tables for annotated vcf files. 
-                       Do not include path, except for folder name(s) inside output directory!
+  -p TABLE_PREFIX      Prefix of summary tables for annotated vcf files. Do not include path, except for folder name(s) inside output directory!
   -c                   Create CSV format snpEff summary files.
   -l LOG               Name of the log file [Annotate_vcf.log]
   -f {a,b,both}        Format of summary tables [a]
   -rg REGION_FILE      Name of the region file (Optional)
-  -na                  Skip vcf annotation step, just make summary tables from annotated vcfs.
+  -sa                  Skip vcf annotation step, just make summary tables from annotated vcf files in the input directory. The input vcf files must be MicroGMT/snpEff annotated.
   -eff PATH_TO_SNPEFF  Absolute path to snpEff.jar. Required if annotae vcf files.
+  -cf                  Calculate frequency summaries for the summary tables.
 ```
 
 ### combine_summary_tables.py
