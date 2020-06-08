@@ -10,6 +10,11 @@ There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on 
 * For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a.
 * For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
 
+### Version 1.3 (June 6 2020) update
+* Added a utility script to check the running environment.
+* Added options to fine tuning the BWA alignment for raw reads inputs.
+* Added mutation frequency summary outputs for step 2.
+
 ### Version 1.2.1 (June 1 2020) update
 Updated the pre-built summary tables for SARS-CoV-2. It now contains 34786 strains from GISAID as of 05/31/2020. Mature peptide name annotated summary tables, and the tables processed by analysis_utilities.py from them are also provided.
 
@@ -27,7 +32,7 @@ MicroGMT is a python based package, which takes either raw sequence reads or ass
 No installation required. Simply download the repository and unpack by "tar".
 
 ## Requirements
-* [Python 3](https://www.python.org/). Required python packages: argparse, os, subprocess, sys, time.
+* [Python 3](https://www.python.org/). Required python packages: argparse, os, subprocess, sys, time, pandas.
 * [snpEff 4.3t](http://snpeff.sourceforge.net/)
 * [SAMtools 1.6 or above](http://samtools.sourceforge.net/)
 * [JAVA 1.8 or above](https://www.java.com/en/)
@@ -37,8 +42,8 @@ No installation required. Simply download the repository and unpack by "tar".
 &#160;2. [BCFtools 1.6 or above](https://samtools.github.io/bcftools/)
 
 * If the inputs are fastq formatted raw reads, you will also need:<br>
-&#160;1. [GATK 3.8](https://gatk.broadinstitute.org/hc/en-us): NOT GATK 4 because GATK 3.8 has the Indel Realigner to use.
-&#160;2. [picard 2 or above](https://broadinstitute.github.io/picard/)
+&#160;1. [GATK 3.8](https://gatk.broadinstitute.org/hc/en-us): NOT GATK 4 because GATK 3.8 has the Indel Realigner to use.<br>
+&#160;2. [picard 2 or above](https://broadinstitute.github.io/picard/)<br>
 &#160;3. [BWA 0.7 or above](http://bio-bwa.sourceforge.net/)
 
 ## Usage
