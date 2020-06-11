@@ -28,6 +28,9 @@ To handle the multiple CDS and the -1 ribosomal frameshift in ORF1ab of SARS-CoV
 ## Description
 MicroGMT is a python based package, which takes either raw sequence reads or assembled genome sequence as input and compares against database sequences to identify and characterize small indels and point mutations in the microbial genoems. Although our default setting is optimized for SARS-CoV-2 virus, the package can be also applied to any other microbial genomes.
 
+## Citation
+Xing Y, Li X, Gao X, Dong Q (2020) MicroGMT: A mutation tracker for SARS-CoV-2 and other microbial genome sequences. Accepted. Front. Microbiol. doi: 10.3389/fmicb.2020.01502. 
+
 ## Installation
 No installation required. Simply download the repository and unpack by "tar".
 
