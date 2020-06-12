@@ -1,4 +1,4 @@
-# MicroGMT: Microbial Genomics Mtation Tracker
+# MicroGMT: Microbial Genomics Mutation Tracker
 A mutation tracker for SARS-CoV-2 and other microbial genome sequences
 
 ## Updates
