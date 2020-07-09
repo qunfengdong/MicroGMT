@@ -15,9 +15,6 @@ There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on 
 * Added options to fine tuning the BWA alignment for raw reads inputs.
 * Added mutation frequency summary outputs for step 2.
 
-### Version 1.2.1 (June 1 2020) update
-Updated the pre-built summary tables for SARS-CoV-2. It now contains 34786 strains from GISAID as of 05/31/2020. Mature peptide name annotated summary tables, and the tables processed by analysis_utilities.py from them are also provided.
-
 ### Version 1.2 (May 31 2020) update
 * Added 4 utility scripts: get_ids.sh, add_custom_annotation.py, mask_sequences.py and sequence_ID_extractor.py.
 * Revised analysis_utilities.py to accommodate the added features of the new utility scripts.
@@ -102,11 +99,6 @@ Optional outputs include the following. For more details about the outputs of ea
 * Regional file and fasta assembly file with selected strains/IDs
 * ID lists to extract strains/IDs from fasta assembly file and region file.
 * Log file.
-
-## The pre-built summary tables for SARS-CoV-2
-The pre-built summary tables contain mutation and region information of 34786 SARS-CoV-2 sequences downloaded from [GISAID](https://www.gisaid.org/) on May 31, 2020 (please note that the "/"s in strain IDs are replaced by "_"). Just unzip them and use. Utility scripts are provided to analyze them, combine them with user-made summary tables, or remove strains from them.
-
-**Note: To distinguish from the two CDS produced by ORF1ab, for SARS-CoV-2 output summary tables, if a mutation takes place in the mature peptide region produced by pp1ab only, the gene ID and name will be "GU280_gp01_pp1ab" and "ORF1ab_pp1ab"; if a mutation takes place in the mature peptide region produced by both pp1a an pp1ab, or only by pp1a, the gene ID and name will be "GU280_gp01_pp1a" and "ORF1ab_pp1a".**
 
 ## The pre-built annotation database for SARS-CoV-2
 The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by revised NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512 to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. The version number of the genome is 2. Please see below about how this database was built.
