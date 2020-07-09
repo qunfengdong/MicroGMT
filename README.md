@@ -64,7 +64,7 @@ No installation required. Simply download the repository and unpack by "tar".
 ### The main functions:
 * The fasta genome reference file. For SARS-CoV-2, its fasta genome reference file is located at <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa. It is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. The accession number ".2" is deleted from the fasta header.
 * The annotation database. For SARS-CoV-2, its annotation database is pre-built and is the default database. For user-supplied genomes, please see "Pre-built annotation database for SARS-CoV-2 and build own annotation databases for user-supplied genomes" for building own databases.
-* A fasta formatted database sequence file, which can contain one or multiple fasta genome assembly sequences from multiple samples (i.e. fasta genome assembly sequences downloaded from NCBI; fasta genome assembly sequences of SARS-CoV-2 downloaded from [GISAID](https://www.gisaid.org/) which contains fasta genome assembly sequences from > 20000 strains in one file. Called "fasta assembly file" below). Or a fastq formatted single/paired end raw sequence file  (called "fastq raw reads file" below). Or a fasta formatted contig sequence file from one sample (i.e. a collection of short fasta sequences from one sample, called "fasta contig file" below. **Caution: the contig sequence file option is not tested. Use at your own risk**).
+* A fasta formatted database sequence file, which can contain one or multiple fasta genome assembly sequences from multiple strains (i.e. fasta genome assembly sequences downloaded from [NCBI](https://www.ncbi.nlm.nih.gov/) or [GISAID](https://www.gisaid.org/. The fasta headers should be strain/sequence IDS.). Called "fasta assembly file" below). Or a fastq formatted single/paired end raw sequence file  (called "fastq raw reads file" below). Or a fasta formatted contig sequence file from one sample (i.e. a collection of short fasta sequences from one sample, called "fasta contig file" below. **Caution: the contig sequence file option is not tested. Use at your own risk**).
 * Optional: A tab delimited regional file contain region information of the samples. Format: "strain/sequence_ID	region(without blanks)"
 
 **Note: Please don't use duplicate fasta headers and sample ID prefixes for different strains/samples. MicroGMT is not checking duplicate IDs.**
@@ -501,15 +501,13 @@ python <path_to_MicroGMT>/sequence_ID_extractor.py \
 ## Tutorial
 ### 1. Example workflow for SARS-CoV-2 sequences
 #### Fasta assembly file as input
-Here we use fasta assembly sequences downloaded from [GISAID](https://www.gisaid.org/) as an example. Suppose more strains were added to GISAID after May 20, 2020 and we want to add these strains to the pre-built summary tables.
+**Preprocessing**
 
-**Inputs**
+Download the desired fasta assembly sequences from [NCBI](https://www.ncbi.nlm.nih.gov/) and put them in one fasta file (named "sequences.fasta" in this example). The fasta headers should be strain/sequence IDs.
 
-Download the fasta assembly sequences from [GISAID](https://www.gisaid.org/). It is named "sequences.fasta" in this example.
+Create the regional information file. It is named "metadata.tsv" in this example. The formate is "strain/sequence_ID  region", separated by tab.
 
-Download the metadata containing region information from [GISAID](https://www.gisaid.org/). It is named "metadata.tsv" in this example.
-
-These files used strain ID as the fasta header. Since the strain IDs contain "/", we need to substitute them with something else ("_" in our example). We also need to extract region information from metadata to make the region file, and substitute blanks (" ") in the region file:
+If you are using files downloaded from GISAID, follow the steps below for preprocessing: Download the fasta assembly sequences and metadata containing region information. The fasta assembly file used strain ID as the fasta header. Since the strain IDs contain "/", we need to substitute them with something else ("_" in our example). We also need to extract region information from metadata to make the region file, and substitute blanks (" ") in the region file:
 ```bash
 sed -i 's/\//_/g' sequences.fasta
 
@@ -682,7 +680,7 @@ python <path_to_MicroGMT>/sequence_ID_extractor.py \
 ```
 
 #### Test dataset
-If you want to try on a small test dataset first, please use the provided test datasets. Simply unzip it to use. It contains database sequences and simulated raw read sequnces of 5 randomly selected strains from GISAID database. For database sequences, start from "Make summary tables". Also the formatting steps in "Input" section is already done. 
+If you want to try on a small test dataset first, please use the provided test datasets. Simply unzip it to use. It contains database sequences and simulated raw read sequnces of 5 randomly selected strains from NCBI database. For fasta assembly sequences, start from "Make summary tables". The formatting steps in "Preprocessing" section is already done. 
 
 ### 2. Workflow for sequences of E.coli K12 strains
 #### Build the annotation database
