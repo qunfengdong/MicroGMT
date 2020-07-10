@@ -11,7 +11,7 @@ There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on 
 * For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
 
 ### Version 1.3.1 (July 9 2020) update
-* Removed pre-built summary tables to prevent copyright issues
+* Removed pre-built summary tables due to potential copyright issues
 * Added a sample script in the test datasets
 
 ### Version 1.3 (June 6 2020) update
