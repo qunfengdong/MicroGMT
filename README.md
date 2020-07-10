@@ -10,6 +10,10 @@ There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on 
 * For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a.
 * For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
 
+### Version 1.3.1 (July 9 2020) update
+* Removed pre-built summary tables to prevent copyright issues
+* Added a sample script in the test datasets
+
 ### Version 1.3 (June 6 2020) update
 * Added a utility script to check the running environment.
 * Added options to fine tuning the BWA alignment for raw reads inputs.
@@ -100,71 +104,10 @@ Optional outputs include the following. For more details about the outputs of ea
 * ID lists to extract strains/IDs from fasta assembly file and region file.
 * Log file.
 
-## The pre-built annotation database for SARS-CoV-2
-The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by revised NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512 to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. The version number of the genome is 2. Please see below about how this database was built.
-
-Other useful files for SARS-CoV-2 are stored in <path_to_MicroGMT>/NC_045512_source_files. These files are based on NCBI's fasta sequence and annotation files of NC_045512.
-
-## Build own annotation databases for user-supplied genomes
-For user-supplied genomes, you can find out if the genome is supported by snpEff:
-```bash
-java -jar <path_to_snpEff>/snpEff.jar databases
-```
-If supported, you can download it by:
-```bash
-java -jar <path_to_snpEff>/snpEff.jar download -v <genome_name> \
-	-c <path_to_MicroGMT>/snpEff.config -dataDir <path_to_MicroGMT>/database
-```
-Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!
-
-Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded database.
-
-**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
-
-<br>
-
-If the genome is not supported, you need to build your own database. The following steps are modified from [snpEff manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) to create the database. Here we use SARS-CoV-2 as an example to show the process:
-#### 1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
-Open the file:
-```bash
-vi <path_to_MicroGMT>/snpEff.config
-```
-&#160;Add your genome information into the file.
-```bash
-# SARS-CoV-2, version NC_045512.2
-NC_045512.genome : SARS-CoV-2
-```
-
-#### 2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
-
-#### 3. Get genome annotations. 
-Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues (i.e. one gene with multiple overlapping CDS), you need to revise your annotation file accordingly.**
-
-* Here we will illustrate how we revised the annotation file "<path_to_MicroGMT>/database/NC_045512/genes.gbk" downloaded from NCBI for SARS-CoV-2:
-
-There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on which the -1 ribosomal frameshift occurs during translation, produces pp1ab; 2) CDS of (266..13483) produces pp1a. They are paritally overlapped. If the annotation is not revised, the mutation position on CDS and peptides will be shifted for positions after 13468 because snpEff (one software used in MicroGMT) fused the two CDS together. The DNA and amino acid changes, and the mutation loci on the genome will still be correct.
-
-This issue is cause by that the two CDS share the same gene ID and name, so snpEff fused them together. To prevent this, for the first CDS, we added "_pp1ab" to its gene name and locus tag (line 86-87 in "genes.gbk"); for the second CDS, we added "_pp1a" to its gene name and locus tag (line 322-323 in "genes.gbk"). After building the database with revised annotation, the resulting summary tables for running SARS-CoV-2 sequences will have the following attributes: For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a. For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
-
-If you have any questions on how to build your own databases on genomes having similar issues, you are more than welcome to email me at yue.july.xing@gmail.com and I'm more than glad to help.
-
-#### 4. Create the database:
-```bash
-java -jar <path_to_snpEff>/snpEff.jar \
-	build -genbank -c <path_to_MicroGMT>/snpEff.config \
-	-dataDir <path_to_MicroGMT>/database -v NC_045512
-``` 
-Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!
-
-You may also add more annotation information to create the database. Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.
-
-You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Remove the version number in fasta header: change ">NC_045512.2" to ">NC_045512".
-
-**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
-
-Another example is in Tutorial section.
-
 ## Quick start
+
+**A sample script is provided along with the test datasets.**
+
 ### Check environment
 ```bash
 <path_to_MicroGMT>/Check_environment.sh \
@@ -498,12 +441,76 @@ python <path_to_MicroGMT>/sequence_ID_extractor.py \
   -id <user-supplied_strain_or_sequence_ID> -f <form_of_output> -a y
   ```
 
+## The pre-built annotation database for SARS-CoV-2
+The annotation database is built by snpEff. For SARS-CoV-2, the annotation database is pre-built in <path_to_MicroGMT>/database and is the default database in variant annotaion. It is built by revised NC_045512's GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512 to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. The version number of the genome is 2. Please see below about how this database was built.
+
+Other useful files for SARS-CoV-2 are stored in <path_to_MicroGMT>/NC_045512_source_files. These files are based on NCBI's fasta sequence and annotation files of NC_045512.
+
+## Build own annotation databases for user-supplied genomes
+For user-supplied genomes, you can find out if the genome is supported by snpEff:
+```bash
+java -jar <path_to_snpEff>/snpEff.jar databases
+```
+If supported, you can download it by:
+```bash
+java -jar <path_to_snpEff>/snpEff.jar download -v <genome_name> \
+	-c <path_to_MicroGMT>/snpEff.config -dataDir <path_to_MicroGMT>/database
+```
+Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!
+
+Then you may use "-r <database_name>" in annotate_vcf.py to use the downloaded database.
+
+**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
+
+<br>
+
+If the genome is not supported, you need to build your own database. The following steps are modified from [snpEff manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) to create the database. Here we use SARS-CoV-2 as an example to show the process:
+#### 1. Configure the new genome in the configration file provided by MicroGMT: <path_to_MicroGMT>/snpEff.config:
+Open the file:
+```bash
+vi <path_to_MicroGMT>/snpEff.config
+```
+&#160;Add your genome information into the file.
+```bash
+# SARS-CoV-2, version NC_045512.2
+NC_045512.genome : SARS-CoV-2
+```
+
+#### 2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
+
+#### 3. Get genome annotations. 
+Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues (i.e. one gene with multiple overlapping CDS), you need to revise your annotation file accordingly.**
+
+* Here we will illustrate how we revised the annotation file "<path_to_MicroGMT>/database/NC_045512/genes.gbk" downloaded from NCBI for SARS-CoV-2:
+
+There are two CDS for ORF1ab gene: 1) CDS joining (266..13468,13468..21555), on which the -1 ribosomal frameshift occurs during translation, produces pp1ab; 2) CDS of (266..13483) produces pp1a. They are paritally overlapped. If the annotation is not revised, the mutation position on CDS and peptides will be shifted for positions after 13468 because snpEff (one software used in MicroGMT) fused the two CDS together. The DNA and amino acid changes, and the mutation loci on the genome will still be correct.
+
+This issue is cause by that the two CDS share the same gene ID and name, so snpEff fused them together. To prevent this, for the first CDS, we added "_pp1ab" to its gene name and locus tag (line 86-87 in "genes.gbk"); for the second CDS, we added "_pp1a" to its gene name and locus tag (line 322-323 in "genes.gbk"). After building the database with revised annotation, the resulting summary tables for running SARS-CoV-2 sequences will have the following attributes: For mutations occur on mature peptides produced by both pp1a and pp1ab, or by pp1a only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1a and ORF1ab_pp1a. For mutations occur on mature peptides produced by pp1ab only, the gene ID and name in output vcfs and summary tables are: GU280_gp01_pp1ab and ORF1ab_pp1ab.
+
+If you have any questions on how to build your own databases on genomes having similar issues, you are more than welcome to email me at yue.july.xing@gmail.com and I'm more than glad to help.
+
+#### 4. Create the database:
+```bash
+java -jar <path_to_snpEff>/snpEff.jar \
+	build -genbank -c <path_to_MicroGMT>/snpEff.config \
+	-dataDir <path_to_MicroGMT>/database -v NC_045512
+``` 
+Please make sure to use "-c" and "-dataDir" to direct the download to MicroGMT directory!
+
+You may also add more annotation information to create the database. Please see [snpEff's manual](http://snpeff.sourceforge.net/SnpEff_manual.html#databases) for more information on building the annotation database.
+
+You will also need the fasta format reference genome sequence file for running MicroGMT. For example, the SARS-CoV-2's reference genome sequence is downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Remove the version number in fasta header: change ">NC_045512.2" to ">NC_045512".
+
+**Caution: make sure the chromosome name in the downloaded database is the same with that in your fasta reference genome file. If they don't match, no annotation will be produced for vcf outputs and summary tables. Check if accession number is in the fasta header if they don't match.**
+
+Another example is in Tutorial section.
+
 ## Tutorial
 ### 1. Example workflow for SARS-CoV-2 sequences
 #### Fasta assembly file as input
 **Preprocessing**
 
-Download the desired fasta assembly sequences from [NCBI](https://www.ncbi.nlm.nih.gov/) and put them in one fasta file (named "sequences.fasta" in this example). The fasta headers should be strain/sequence IDs.
+Download the desired fasta assembly sequences and put them in one fasta file (named "sequences.fasta" in this example). The fasta headers should be strain/sequence IDs.
 
 Create the regional information file. It is named "metadata.tsv" in this example. The formate is "strain/sequence_ID  region", separated by tab.
 
@@ -515,10 +522,11 @@ awk -F "\t" '{print $1"\t"$6}' metadata.tsv > metadata.short.tsv
 sed -i 's/\//_/g' metadata.short.tsv
 sed -i 's/ /_/g' metadata.short.tsv
 ```
+*If using files downloaded from GISAID, you may build the summary tables once, and update it later by removing/adding strains/sequences. Detailed instructions are listed below.*
 
 **Exclude strains/IDs that are already exist in the pre-built summary tables for the new inputs (optional)**
 
-If you have a new fasta assembly file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**
+If you have a new fasta assembly file and would like to compare with the existing summary tables to remove existing strains/IDs from it first, we provided utility scripts to do this job conveniently. **This is especially useful for excluding strains/sequences already exist in pre-built summary tables built from the big input fasta assembly file downloaded from GISAID. That is, you can build summary tables from GISAID database onece, and always add/remove strains/sequences from it.**
 
 All you need are the new fasta assembly file (sequences.fasta from last step) and the id.list file containing all the strains/IDs from the existing summary tables, which is provided along with the pre-built summary tables. For user supplied genomes, this id.list file is also produced by sequence_to_vcf.py.
 
@@ -556,7 +564,7 @@ The outputs are all the summary tables of format 1 and format 2 for ids_to_add.f
 
 We noticed that strains may be removed from the GISAID SARS-CoV-2 database. So we designed this utility script to remove unwanted strains from summary tables. You will need a list of strains/IDs that need to be removed. Here we will demostrate how to use it to remove unwanted strains from the pre-built summary tables:
 
-If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/IDs already exist in the pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**
+If you have a list of IDs in file A (sequences.list from last step), the existing summary tables (the pre-built summary tables in this example), and you want to identify unwanted strains (that is, strains in the pre-built summary tables but not in file A), you may use the following commands. **This is especially useful for excluding strains/sequences already exist in pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**
 ```bash
 cat <path_to_summary_tables>/id.list | while read line
 do
@@ -585,7 +593,7 @@ python <path_to_MicroGMT>/remove_from_summary_tables.py \
 
 **Combine summary tables  (optional)**
 
-We will demonstrate how to combine the summary tables from "Make summary tables" and "Remove strains/IDs from summary tables" sessions above. 
+We will demonstrate how to combine the summary tables from "Make summary tables" and "Remove strains/IDs from summary tables" sessions above. **This is especially useful for adding strains/sequences to pre-built summary tables built from the big input fasta assembly file downloaded from GISAID.**
 
 Combine format 1 summary tables:
 ```bash
