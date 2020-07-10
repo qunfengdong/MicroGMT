@@ -1,6 +1,6 @@
 This folder contains test datasets and sample output summary tables. 
 
-SARS-CoV-2_test_data contains fasta assembly and simulated fastq raw read files for 5 SARS-CoV-2 strains downloaded from NCBI, as well as their region information file.
+SARS-CoV-2_test_data contains fasta assembly and simulated fastq raw read files for 5 SARS-CoV-2 strains downloaded from NCBI, as well as their region information file. A sample script for analyzing them by MicroGMT is also provided.
 
 E.coli_K12_test_data contains fasta assembly file of 3 randomly selected E.coli K12 strains downloaded from NCBI.
 
