@@ -409,7 +409,7 @@ python <path_to_MicroGMT>/analysis_utilities.py \
   -t a -a y
 ```
 
-#### Find unqiue mutations (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+#### Find all unqiue mutations from the summary table (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
 * Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
 * Output: tab delimited file with one mutation per line ("strain_ID region chr pos gene_id gene_name mutation" for form2 summary table, and "strain_ID region chr pos gene_id gene_name custom_annotation mutation" for custom annotated form2 summary table).
 
@@ -426,8 +426,11 @@ python <path_to_MicroGMT>/analysis_utilities.py \
 ```
 
 ### Extract mutation informtation for a specific strain/sequence ID
-* Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
-* Output: tab delimited file with mutation informtation for a user-supplied strain/sequence ID. Long form: "ID  region  chr  pos  gene_id  gene_name  custom_annotation (if input custom annotated form2 summary table)  mutation  mutation_type" + other strains/sequences' mutation information on the mutation loci of this strain/sequence. Short form: "ID  region  chr  pos  gene_id  gene_name  custom_annotation (if input custom annotated form2 summary table)  mutation  mutation_type". There are three kinds of mutation_types: Unique_mutation (On that locus, the mutation for the extracted strain/sequence is not in any other strains in the summary table); New_mutation (On that locus, there are mutations exist for other strains. But the mutation for the extracted strain/sequence is different than all other existing mutations on that locus in the summary table.); Known_mutation (On that locus, there are mutations exist for other strains. And the mutation for the extracted strain/sequence is the same as one of the existing mutations on that locus in the summary table.).
+Input: form2 summary table or custom annotated form2 summary table (input one summary table at a time)
+
+Output: tab delimited file with mutation informtation for a user-supplied strain/sequence ID. 
+* Long format: "ID  region  chr  pos  gene_id  gene_name  custom_annotation (if input custom annotated form2 summary table)  mutation  mutation_type" + other strains/sequences' mutation information on the mutation loci of this strain/sequence. Short format: "ID  region  chr  pos  gene_id  gene_name  custom_annotation (if input custom annotated form2 summary table) mutation  mutation_type". 
+* There are three kinds of mutation_types: "Known_mutation" (means that the mutation in your strain also appeared in other strains in your summary table), "New_mutation" (means that your strain has a new mutation at that locus, which doesn't appear in any other strains in your summary table. **Note** that in this situation there are mutations on the same locus in other strains of your summary table, but those mutations are not the same as the mutation in your new strain. Your mutation is NOT the only mutation at that locus), and "Unique_mutation" (means that your strain has a new mutation at that locus, and that locus does not have ANY OTHER mutations in any other strains in your summary table. Your mutation IS the only mutation at that locus).
 
 ```bash
 # form2 summary table as input
@@ -673,7 +676,7 @@ python <path_to_MicroGMT>/analysis_utilities.py \
   -i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
   -t a -a y
 ```
-Find unqiue mutations in custom annotated summary tables (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
+Find all unqiue mutations in custom annotated summary tables (unqiue mutations are defined by only one strain/ID has that mutation at a specific locus):
 ```bash
 python <path_to_MicroGMT>/analysis_utilities.py \
   -i <custom_annotated_form2_summary_table> -o <name_of_output_table> \
