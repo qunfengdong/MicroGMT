@@ -11,11 +11,16 @@ if [[ $? != 0 ]]
 then
 	echo "Error: Python is not installed properly."
 else
-	if [[ $a = *3.7* ]]
+	if [[ $a == *3.* ]]
 	then
 	    echo "Python version passed."
 	else
-	    echo "Error: Python version is not passed. Need version 3.7."
+	    if [[ $a == "" ]]
+	    then
+	    	echo "Python version is printed on screen. If your python version is 3 you are good to go."
+	    else
+	    	echo "Error: Python version is not passed. Need version 3."
+	    fi
 	fi
 fi
 
@@ -110,11 +115,12 @@ fi
 rm -f MicroGMT_checkversion.tmp
 
 # check java
+java -version
 java -version > MicroGMT_checkversion.tmp 2>&1
 if grep -q "1.8" MicroGMT_checkversion.tmp
 then
 	echo "JAVA version passed."
 else
-	echo "Warning: JAVA is not installed properly or JAVA version is not passed. MicroGMT is tested under JAVA version 1.8. If you are using other JAVA versions, you may still try to run MicroGMT. If your snpEff, PICARD and GATK is working under your java environment, then you are good to go."
+	echo "JAVA version printed on screen. If your JAVA version is 1.8 or above you are good to go."
 fi
 rm -f MicroGMT_checkversion.tmp
