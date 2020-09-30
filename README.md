@@ -1,7 +1,7 @@
 # MicroGMT: Microbial Genomics Mutation Tracker
 A mutation tracker for SARS-CoV-2 and other microbial genome sequences
 
-## Note: MicroGMT can now run with GATK 4.
+## Note: MicroGMT now run with GATK 4.
 
 ## Updates
 ### Important update for SARS-CoV-2:
