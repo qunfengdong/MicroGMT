@@ -32,16 +32,16 @@ No installation required. Simply download the repository and unpack by "tar".
 ## Requirements
 * [Python 3](https://www.python.org/). Required python modules: argparse, os, subprocess, sys, time. Python module pandas is also required if users want to further output mutation frequency tables from summary tables.
 * [snpEff 4.3t](http://snpeff.sourceforge.net/)
-* [SAMtools 1.6 or above](http://samtools.sourceforge.net/)
+* [SAMtools 1.6 or above](http://samtools.sourceforge.net/). Should be added to your $PATH.
 * [JAVA 1.8 or above](https://www.java.com/en/)
 
 * If the inputs are fasta genome assembly sequences/contigs, you will also need:<br>
-&#160;1. [minimap2](https://github.com/lh3/minimap2)<br>
-&#160;2. [BCFtools 1.6 or above](https://samtools.github.io/bcftools/)
+&#160;1. [minimap2](https://github.com/lh3/minimap2). Should be added to your $PATH.<br>
+&#160;2. [BCFtools 1.6 or above](https://samtools.github.io/bcftools/). Should be added to your $PATH.
 
 * If the inputs are fastq formatted raw reads, you will also need:<br>
-&#160;1. [GATK 4](https://gatk.broadinstitute.org/hc/en-us)<br>
-&#160;3. [BWA 0.7 or above](http://bio-bwa.sourceforge.net/)
+&#160;1. [GATK 4](https://gatk.broadinstitute.org/hc/en-us). Should be added to your $PATH.<br>
+&#160;3. [BWA 0.7 or above](http://bio-bwa.sourceforge.net/). Should be added to your $PATH.
 
 ## Usage
 * The main function of MicroGMT contains two steps: sequence_to_vcf.py (step 1), which aligns the input file(s) to the reference genome and identify variants; and annotate_vcf.py (step 2), which annotates the variants and output summary tables. Note: annotate_vcf.py (step 2) can take in the step 1 outputs from multiple runs, as long as they are in one input folder. So you can first process all samples by step 1, and then run them all together by step 2.
@@ -103,8 +103,7 @@ Optional outputs include the following. For more details about the outputs of ea
 
 ### Check environment
 ```bash
-<path_to_MicroGMT>/Check_environment.sh \
-	<path_to_snpEff> <path_to_GATK3.8> <path_to_PICARD>
+<path_to_MicroGMT>/Check_environment.sh <path_to_snpEff>
 ```
 Output will be print to the screen to let you know if any tool is not properly installed, or if the tool version is not correct.
 
@@ -163,8 +162,6 @@ python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
   -i fastq -fq1 <fastq_raw_reads_R1_file> -fq2 <fastq_raw_reads_R2_file> \
   -o <out_dir_1> \
-  -gatk <path_to_gatk> \
-  -picard <path_to_picard> \
   -l <log_name> -n <output_prefix> -ki
 ```
 * For step 1, to run multiple samples at one time, do the following, in which the <fastq_prefix_list> file is a text file containg the prefix of each fastq raw reads file to be processed. One sample per line. In this example, if the fastq files are named test_1.fq and test_2.fq, the prefix is "test". The "-fq1" and "-fq2" paramters take in the full names of the fastq files including absolute or relative path.
@@ -176,8 +173,6 @@ do
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
   -i fastq -fq1 <dir_to_fqfiles>/${line}_1.fq -fq2 <dir_to_fqfiles>/${line}_2.fq \
   -o <out_dir_1> \
-  -gatk <path_to_gatk> \
-  -picard <path_to_picard> \
   -l ${line}.log -n ${line} -ki
 done
 ```
@@ -209,8 +204,6 @@ do
   -r <fasta_reference_sequence_file> \
   -i fastq -fq1 <dir_to_fqfiles>/${line}_1.fq -fq2 <dir_to_fqfiles>/${line}_2.fq \
   -o <out_dir_1> \
-  -gatk <path_to_gatk> \
-  -picard <path_to_picard> \
   -l ${line}.log -n ${line} -ki
 done
 ```
@@ -220,8 +213,6 @@ python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <fasta_reference_sequence_file> \
   -fq1 <fastq_raw_reads_R1_file> -fq2 <fastq_raw_reads_R2_file> \
   -o <out_dir_1> \
-  -gatk <path_to_gatk> \
-  -picard <path_to_picard> \
   -l <log_name> -n <output_prefix> -ki
 ```
 &#160;Note: you can also change "-fq1" and "-fq2" to "-fq" to run single end fastq_raw_reads samples.
@@ -475,7 +466,7 @@ NC_045512.genome : SARS-CoV-2
 #### 2. If the genome uses a non-standard codon table: Add codon table parameter. No need for SARS-CoV-2.
 
 #### 3. Get genome annotations. 
-Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues (i.e. one gene with multiple overlapping CDS), you need to revise your annotation file accordingly.**
+Four different formats are accepted: GTF, GFF, RefSeq table from UCSC, and GenBank file. The SARS-CoV-2's annotation file we used is the full GenBank file downloaded from https://www.ncbi.nlm.nih.gov/nuccore/nc_045512. Rename it by "genes.gbk". Create a folder named "NC_045512" under <path_to_MicroGMT>/database/. Finally, put "genes.gbk" under <path_to_MicroGMT>/database/NC_045512. For other annotation file formats, you will also need the fasta reference genome file. Please see snpEff's manual about how to use GTF, GFF or RefSeq table from UCSC to create database. **Caution: The GenBank file of SARS-CoV-2 was modified to handle the multiple CDS and the -1 ribosomal frameshift of ORF1ab. If your genome has similar issues (i.e. one gene with multiple overlapping CDS), you need to revise your annotation file accordingly.**
 
 * Here we will illustrate how we revised the annotation file "<path_to_MicroGMT>/database/NC_045512/genes.gbk" downloaded from NCBI for SARS-CoV-2:
 
@@ -546,7 +537,7 @@ Use files from last step to make summary tables:
 ```bash
 python <path_to_MicroGMT>/sequence_to_vcf.py \
 	-r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
-  -i assembly -fs ids_to_add.fasta \
+	-i assembly -fs ids_to_add.fasta \
 	-o <make_out_dir_1>
 	
 python <path_to_MicroGMT>/annotate_vcf.py \
@@ -640,8 +631,6 @@ do
   -r <path_to_MicroGMT>/NC_045512_source_files/NC_045512.fa \
   -i fastq -fq1 <dir_to_fqfiles>/${line}_1.fq -fq2 <dir_to_fqfiles>/${line}_2.fq \
   -o <out_dir_1> \
-  -gatk <path_to_gatk> \
-  -picard <path_to_picard> \
   -l ${line}.log -n ${line} -ki
 done
 	
@@ -739,8 +728,7 @@ The core MicroGMT steps are listed here:
 # Step 1
 python <path_to_MicroGMT>/sequence_to_vcf.py \
   -r <fasta_reference_sequence_file> -i fastq -fq1 <fastq_raw_reads_R1_file> \
-  -fq2 <fastq_raw_reads_R2_file> -o <out_dir_1> \
-  -gatk <path_to_gatk> -picard <path_to_picard> -ki
+  -fq2 <fastq_raw_reads_R2_file> -o <out_dir_1> -ki
 
 # Step 2
 python <path_to_MicroGMT>/annotate_vcf.py \
@@ -777,8 +765,7 @@ The total time used for the core steps for one SARS-CoV-2 sample is:
 ## Arguments
 ### Check_environment.sh
 ```bash
-<path_to_MicroGMT>/Check_environment.sh \
-	<path_to_snpEff> <path_to_GATK3.8> <path_to_PICARD>
+<path_to_MicroGMT>/Check_environment.sh <path_to_snpEff>
 ```
 ### sequence_to_vcf.py
 ``` bash
@@ -817,7 +804,7 @@ Optional arguments:
                         Sequence divergence: asm5/asm10/asm20 for ~0.1/1/5 percentages. Only works with 'assembly' option. [asm5]
   -t THREAD             Number of threads. [10]
 ```
--md MIN_DISTANCE: The minimum distance to buffer records to account for clipping on the 5' end of the records, used by GATK/picard to mark duplicates. Only works with 'fastq' option. You may want to set it to about twice the 99.5% percentile of the fragment insert size distribution, or set it to -1 to use either a) twice the first read's read length, or b) 100, whichever is smaller. See https://gatk.broadinstitute.org/hc/en-us/articles/360036508852-MarkDuplicatesWithMateCigar-Picard- for more details. **If you get incomplete bam file and error like "Found a samRecordWithOrdinal with sufficiently large clipping that we may have missed including it in an early duplicate marking iteration. Please increase the minimum distance to at least XXbp" and/or [E::bgzf_read] Read block operation failed with error 4 after xxx of xxx bytes", set this parameter to a larger value accordingly.** [-1]
+-md MIN_DISTANCE: The minimum distance to buffer records to account for clipping on the 5' end of the records, used by GATK/picard to mark duplicates. Only works with 'fastq' option. You may want to set it to about twice the 99.5% percentile of the fragment insert size distribution, or set it to -1 to use either a) twice the first read's read length, or b) 100, whichever is smaller. See https://gatk.broadinstitute.org/hc/en-us/articles/360036508852-MarkDuplicatesWithMateCigar-Picard- for more details. **If you get incomplete bam file and error like "Found a samRecordWithOrdinal with sufficiently large clipping that we may have missed including it in an early duplicate marking iteration. Please increase the minimum distance to at least XXbp" and/or "[E::bgzf_read] Read block operation failed with error 4 after xxx of xxx bytes", set this parameter to a larger value accordingly.** [-1]
 
 ### annotate_vcf.py
 ``` bash
