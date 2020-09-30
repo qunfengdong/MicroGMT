@@ -1,5 +1,5 @@
 #!/bin/bash
-# MicroGMT Version 1.3.2  (Sep 2020)
+# MicroGMT Version 1.3  (June 2020)
 
 in_dir=$1
 out_dir=$2

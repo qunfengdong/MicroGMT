@@ -46,7 +46,7 @@ def main():
 
 	log_print(param['out_log'],'==================== MicroGMT ====================')
 	log_print(param['out_log'],'                   Mask_sequences')
-	log_print(param['out_log'],'             Version 1.3.2  (Sep 2020)')
+	log_print(param['out_log'],'             Version 1.3  (June 2020)')
 	log_print(param['out_log'],'   Bug report: Yue Xing <yue.july.xing@gmail.com>')
 	log_print(param['out_log'],'======================================================')
 

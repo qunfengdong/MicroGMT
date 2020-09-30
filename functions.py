@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# MicroGMT Version 1.3.2  (Sep 2020)
+# MicroGMT Version 1.3  (June 2020)
 
 import time
 import os
@@ -47,7 +47,7 @@ def fastaq_to_vcf(out_log,out_dir,in_ref, \
 	in_fq1,in_fq2,in_fid,prior,mbq,BAQ, \
 	path_to_picard,path_to_gatk,keep_bam,keep_idx, \
 	in_fastq,in_pairing,in_th,md):
-	picard_path = os.path.join(path_to_picard,"picard.jar")
+	#picard_path = os.path.join(path_to_picard,"picard.jar")
 	ref_name=in_ref.split("/")[-1]
 	ref_name=ref_name.split(".")[0:-1]
 	ref_name='.'.join(ref_name)
@@ -56,8 +56,8 @@ def fastaq_to_vcf(out_log,out_dir,in_ref, \
 	subprocess.call(['cp',in_ref,ref_genome])
 	log_print(out_log,'Create index files for the reference...')
 	if not os.path.exists(ref_genome_dict):
-		subprocess.call(['java', '-jar', picard_path, 'CreateSequenceDictionary', \
-			'REFERENCE=' + ref_genome, 'OUTPUT=' + ref_genome_dict])
+		subprocess.call(['gatk', 'CreateSequenceDictionary', \
+			'-R', ref_genome, '-O', ref_genome_dict])
 	if not os.path.exists(os.path.join(out_dir, ref_name+'.fa.sa')):
 		subprocess.call(['bwa', 'index', ref_genome])
 	if not os.path.exists(os.path.join(out_dir, ref_name+'.fa.fai')):

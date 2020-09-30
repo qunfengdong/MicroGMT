@@ -1,9 +1,7 @@
 #!/bin/bash
-# MicroGMT Version 1.3.2  (Sep 2020)
+# MicroGMT Version 1.3  (June 2020)
 
 eff=$1
-pgatk=$2
-ppicard=$3
 
 # check python
 a=$(python --version)
@@ -34,7 +32,7 @@ else
 	then
 	    echo "SnpEff version passed."
 	else
-	    echo "Error: SnpEff version is not passed. Need version 4.3t."
+	    echo "Error: SnpEff version is not passed. Need version 4.3t. MicroGMT is not tested with SnpEff 5.0."
 	fi
 fi
 
@@ -75,31 +73,18 @@ else
 fi
 
 # check gatk
-a=$(java -jar ${pgatk}/GenomeAnalysisTK.jar --version)
+a=$(gatk --version)
 if [[ $? != 0 ]]
 then
-	echo "Warning: GATK 3.8 is not installed properly. It is required for fastq raw reads inputs."
+	echo "Warning: GATK 4 is not installed properly. It is required for fastq raw reads inputs."
 else
-	if [[ $a = *3.8* ]]
+	if [[ $a = *v4* ]]
 	then
 	    echo "GATK version passed."
 	else
-	    echo "Warning: GATK version is not passed. Need version 3.8. It is required for fastq raw reads inputs."
+	    echo "Warning: GATK version is not passed. Need version 4. It is required for fastq raw reads inputs."
 	fi
 fi
-
-# check picard
-java -jar ${ppicard}/picard.jar CreateSequenceDictionary --version > MicroGMT_checkversion.tmp 2>&1 
-
-a=$(wc -l MicroGMT_checkversion.tmp | awk '{print $1}')
-
-if grep -q "^2." MicroGMT_checkversion.tmp && [[ $a = 1 ]]
-then
-	echo "PICARD version passed."
-else
-	echo "Warning: PICARD is not installed properly or PICARD version is not passed. Need version 2.0 or above. It is required for fastq raw reads inputs."
-fi
-rm -f MicroGMT_checkversion.tmp
 
 # check bwa
 bwa mem > MicroGMT_checkversion.tmp 2>&1 
