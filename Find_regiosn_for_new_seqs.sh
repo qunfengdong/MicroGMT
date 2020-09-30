@@ -1,5 +1,5 @@
 #!/bin/bash
-# MicroGMT Version 1.3  (June 2020)
+# MicroGMT Version 1.3.2  (Sep 2020)
 
 add_id_new_list=$1
 reg_file=$2

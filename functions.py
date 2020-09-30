@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# MicroGMT Version 1.3  (June 2020)
+# MicroGMT Version 1.3.2  (Sep 2020)
 
 import time
 import os
@@ -46,7 +46,7 @@ def contig_to_vcf(out_log,out_dir,in_seqs_file,in_ref, \
 def fastaq_to_vcf(out_log,out_dir,in_ref, \
 	in_fq1,in_fq2,in_fid,prior,mbq,BAQ, \
 	path_to_picard,path_to_gatk,keep_bam,keep_idx, \
-	in_fastq,in_pairing,in_th):
+	in_fastq,in_pairing,in_th,md):
 	picard_path = os.path.join(path_to_picard,"picard.jar")
 	ref_name=in_ref.split("/")[-1]
 	ref_name=ref_name.split(".")[0:-1]
@@ -77,11 +77,12 @@ def fastaq_to_vcf(out_log,out_dir,in_ref, \
 	subprocess.call(['./Prepare_fastq.sh',ref_genome,\
 		in_fq1,in_fq2,in_fid,prior,mbq,BAQ,\
 		path_to_gatk,out_dir,out_log, \
-		in_fastq,in_pairing,in_th,os.path.dirname(os.path.realpath(__file__))])
+		in_fastq,in_pairing,in_th,os.path.dirname(os.path.realpath(__file__)),path_to_picard,md])
 	os.chdir(dirn)
 	if keep_bam=="F":
 		subprocess.call(['rm', '-f',os.path.join(out_dir,in_fid+'.bam')])
 		subprocess.call(['rm', '-f',os.path.join(out_dir,in_fid+'.bam.bai')])
+		subprocess.call(['rm', '-f',os.path.join(out_dir,in_fid+'.marked_dup_metrics.txt')])
 	if keep_idx=="F":
 		subprocess.call(['rm', '-f',ref_genome_dict])
 		subprocess.call(['rm', '-f',os.path.join(out_dir, ref_name+'.fa.fai')])

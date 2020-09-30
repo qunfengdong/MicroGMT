@@ -43,9 +43,11 @@ def main():
 	group3.add_argument('-ki', dest='keep_idx', action='store_true', \
 		help="Keep index files. Only works with 'fastq' option.")
 	group3.add_argument('-p', type=float, dest='prior', \
-		default=0, help="Prior for bcftools variant caller (expected substitution rate). 0 means the prior is disabled. Only works for 'assembly' or 'contig' option. [0]'.")
+		default=0, help="Prior for bcftools variant caller (expected substitution rate). 0 means the prior is disabled. Only works for 'assembly' or 'contig' option. [0]")
 	group3.add_argument('-m', type=int, dest='mbq', 
 		default=10, help="Minimum base quality for variant caller. Only works with 'fastq' option. [10]")
+	group3.add_argument('-md', type=int, dest='min_distance', 
+		default=-1, help="The minimum distance to buffer records to account for clipping on the 5' end of the records, used by picard. Only works with 'fastq' option. See manual for more details. [-1]")
 	group3.add_argument('-a', dest='asm', choices=['asm5','asm10','asm20'], 
 		default='asm5', help="Sequence divergence: asm5/asm10/asm20 for ~0.1/1/5 percentages. Only works with 'assembly' option. [asm5]")
 	group3.add_argument('-t', dest='thread', type=int, 
@@ -67,7 +69,7 @@ def main():
 
 	log_print(param['out_log'],'==================== MicroGMT ====================')
 	log_print(param['out_log'],'                 Sequence_to_vcf')
-	log_print(param['out_log'],'             Version 1.3  (June 2020)')
+	log_print(param['out_log'],'             Version 1.3.2  (Sep 2020)')
 	log_print(param['out_log'],'   Bug report: Yue Xing <yue.july.xing@gmail.com>')
 	log_print(param['out_log'],'======================================================')
 
@@ -135,6 +137,7 @@ def main():
 	param['mbq'] = str(args.mbq)
 	param['BAQ'] = 'not_used'
 	param['asm'] = args.asm
+	param['md'] = str(args.min_distance)
 
 	if param['input_format']=='assembly':
 		# fasta to vcf
@@ -160,7 +163,7 @@ def main():
 			param['fastq1'],param['fastq2'],param['name'],param['prior'], \
 			param['mbq'],param['BAQ'],param['path_to_picard'], \
 			param['path_to_gatk'],param['keep_bam'], \
-			param['keep_idx'],param['fastq'],param['pairing'],param['thread'])
+			param['keep_idx'],param['fastq'],param['pairing'],param['thread'],param['md'])
 		log_print(param['out_log'],"Processing fastq inputs successful!")
 
 if __name__ == '__main__':

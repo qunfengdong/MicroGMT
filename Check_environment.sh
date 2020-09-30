@@ -1,5 +1,5 @@
 #!/bin/bash
-# MicroGMT Version 1.3  (June 2020)
+# MicroGMT Version 1.3.2  (Sep 2020)
 
 eff=$1
 pgatk=$2

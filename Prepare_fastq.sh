@@ -1,5 +1,5 @@
 #!/bin/bash
-# MicroGMT Version 1.3  (June 2020)
+# MicroGMT Version 1.3.2  (Sep 2020)
 
 ref=$1
 fq1=$2
@@ -15,6 +15,8 @@ fastq=${11}
 pairing=${12}
 th=${13}
 mdir=${14}
+path_to_picard=${15}
+md=${16}
 
 cd $out_dir
 
@@ -26,14 +28,22 @@ bwa mem -t ${th} -R "@RG\tID:${fid}\tSM:${fid}" \
 ${a} \
 ${ref} ${fq1} ${fq2} | \
 samtools view -@ ${th} -Su -q 1 - | \
-samtools sort -@ ${th} - | samtools rmdup - ${fid}.bam
+samtools sort -@ ${th} - | samtools rmdup - ${fid}.rm.bam
 else
 bwa mem -t ${th} -R "@RG\tID:${fid}\tSM:${fid}" \
 ${a} \
 ${ref} ${fastq} | \
 samtools view -@ ${th} -Su -q 1 - | \
-samtools sort -@ ${th} - | samtools rmdup - ${fid}.bam
+samtools sort -@ ${th} - | samtools rmdup - ${fid}.rm.bam
 fi
+
+samtools index ${fid}.rm.bam
+
+java -jar ${path_to_picard}/picard.jar MarkDuplicatesWithMateCigar \
+I=${fid}.rm.bam \
+O=${fid}.bam \
+M=${fid}.marked_dup_metrics.txt \
+MINIMUM_DISTANCE=${md}
 
 samtools index ${fid}.bam
 
@@ -48,8 +58,8 @@ java -jar ${PATH_TO_GATK}/GenomeAnalysisTK.jar \
 -targetIntervals ${fid}_IndelRealigner.intervals \
 -o ${fid}.f.bam
 
-echo "Samtools flagstat for BAM file of ${fid}:" >> $log
-samtools flagstat ${fid}.f.bam >> $log
+#echo "Samtools flagstat for BAM file of ${fid}:" >> $log
+samtools flagstat ${fid}.f.bam > ${fid}.flagstat
 
 java -jar ${PATH_TO_GATK}/GenomeAnalysisTK.jar -T HaplotypeCaller \
 -R ${ref} -I ${fid}.f.bam \
@@ -62,6 +72,9 @@ then
 	rm -f ${ref}
 	rm -f ${fid}.bam
 	rm -f ${fid}.bam.bai
+	rm -f ${fid}.rm.bam
+	rm -f ${fid}.rm.bam.bai
+	#rm -f ${fid}.marked_dup_metrics.txt
 	rm -f ${fid}_IndelRealigner.intervals
 	mv ${fid}.f.bam ${fid}.bam
 	mv ${fid}.f.bai ${fid}.bam.bai
